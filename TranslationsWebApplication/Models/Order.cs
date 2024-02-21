@@ -9,6 +9,8 @@ public partial class Order
 
     public string OrderName { get; set; } = null!;
 
+    //public int? TypeId { get; set; }
+
     public int? TopicId { get; set; }
 
     public int OrderScope { get; set; }
@@ -18,6 +20,8 @@ public partial class Order
     public DateTime OrderSubmissionDate { get; set; }
 
     public string OrderStatus { get; set; } = null!;
+
+    //public virtual Type Type { get; set; } = null!;
 
     public virtual Topic? Topic { get; set; }
 

@@ -100,33 +100,33 @@ public partial class DbtranslationAgencyContext : DbContext
                 .IsFixedLength();
             entity.Property(e => e.OrderSubmissionDate).HasColumnType("datetime");
 
-           //entity.HasOne(d => d.Customer).WithMany(p => p.Orders)
-                //.HasForeignKey(d => d.CustomerId)
-                //.OnDelete(DeleteBehavior.ClientSetNull)
-                //.HasConstraintName("FK_Orders_D_Customers");
+            //entity.HasOne(d => d.Customer).WithMany(p => p.Orders)
+            //.HasForeignKey(d => d.CustomerId)
+            //.OnDelete(DeleteBehavior.ClientSetNull)
+            //.HasConstraintName("FK_Orders_D_Customers");
 
             entity.HasOne(d => d.Topic).WithMany(p => p.Orders)
                 .HasForeignKey(d => d.TopicId)
                 .HasConstraintName("FK_Orders_Topic");
 
-             /*entity.HasOne(d => d.Translator).WithMany(p => p.Orders)
-                .HasForeignKey(d => d.TranslatorId)
-                .HasConstraintName("FK_Orders_D_Translators");
+            /*entity.HasOne(d => d.Translator).WithMany(p => p.Orders)
+               .HasForeignKey(d => d.TranslatorId)
+               .HasConstraintName("FK_Orders_D_Translators");
 
-            entity.HasOne(d => d.Type).WithMany(p => p.Orders)
-                .HasForeignKey(d => d.TypeId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Orders_Types");
+           entity.HasOne(d => d.Type).WithMany(p => p.Orders)
+               .HasForeignKey(d => d.TypeId)
+               .OnDelete(DeleteBehavior.ClientSetNull)
+               .HasConstraintName("FK_Orders_Types");
 
-            entity.HasOne(d => d.OriginalLanguage).WithMany(p => p.OrderOriginalLanguages)
-                .HasForeignKey(d => d.OriginalLanguageId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Orders_Languages");
+           entity.HasOne(d => d.OriginalLanguage).WithMany(p => p.OrderOriginalLanguages)
+               .HasForeignKey(d => d.OriginalLanguageId)
+               .OnDelete(DeleteBehavior.ClientSetNull)
+               .HasConstraintName("FK_Orders_Languages");
 
-            entity.HasOne(d => d.TranslationLanguage).WithMany(p => p.OrderTranslationLanguages)
-                .HasForeignKey(d => d.TranslationLanguageId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Orders_Languages2");*/
+           entity.HasOne(d => d.TranslationLanguage).WithMany(p => p.OrderTranslationLanguages)
+               .HasForeignKey(d => d.TranslationLanguageId)
+               .OnDelete(DeleteBehavior.ClientSetNull)
+               .HasConstraintName("FK_Orders_Languages2");*/
         });
 
         modelBuilder.Entity<PersonalAccount>(entity =>
@@ -157,10 +157,10 @@ public partial class DbtranslationAgencyContext : DbContext
 
             entity.Property(e => e.TransactionDate).HasColumnType("datetime");
 
-           /* entity.HasOne(d => d.Order).WithMany(p => p.Transactions)
-                .HasForeignKey(d => d.OrderId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Payment_Orders");*/
+            /* entity.HasOne(d => d.Order).WithMany(p => p.Transactions)
+                 .HasForeignKey(d => d.OrderId)
+                 .OnDelete(DeleteBehavior.ClientSetNull)
+                 .HasConstraintName("FK_Payment_Orders");*/
         });
 
         modelBuilder.Entity<Translator>(entity =>

@@ -10,15 +10,50 @@
     <h4>Topic</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.TopicName)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.TopicName)
         </dd>
     </dl>
 </div>
+
+@if (Model.Orders != null && Model.Orders.Any())
+{
+    <h2>Orders</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.Orders.First().OrderName)</th>
+                <th>@Html.DisplayNameFor(model => model.Orders.First().Topic.TopicName)</th>
+                <th>@Html.DisplayNameFor(model => model.Orders.First().OrderScope)</th>
+                <th>@Html.DisplayNameFor(model => model.Orders.First().OrderPrice)</th>
+                <th>@Html.DisplayNameFor(model => model.Orders.First().OrderSubmissionDate)</th>
+                <th>@Html.DisplayNameFor(model => model.Orders.First().OrderStatus)</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var order in Model.Orders)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(_ => order.OrderName)</td>
+                    <td>@Html.DisplayFor(_ => order.Topic.TopicName)</td>
+                    <td>@Html.DisplayFor(_ => order.OrderScope)</td>
+                    <td>@Html.DisplayFor(_ => order.OrderPrice)</td>
+                    <td>@Html.DisplayFor(_ => order.OrderSubmissionDate)</td>
+                    <td>@Html.DisplayFor(_ => order.OrderStatus)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No orders for this type.</p>
+}
+
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.TopicId">Edit</a> |
+    <a asp-action="Edit" asp-route-id="@Model.TopicId">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>

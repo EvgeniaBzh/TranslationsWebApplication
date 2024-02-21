@@ -21,9 +21,9 @@ namespace TranslationsWebApplication.Controllers
         // GET: Topics
         public async Task<IActionResult> Index()
         {
-              return _context.Topics != null ? 
-                          View(await _context.Topics.ToListAsync()) :
-                          Problem("Entity set 'DbtranslationAgencyContext.Topics'  is null.");
+            return _context.Topics != null ?
+                        View(await _context.Topics.ToListAsync()) :
+                        Problem("Entity set 'DbtranslationAgencyContext.Topics'  is null.");
         }
 
         // GET: Topics/Details/5
@@ -35,7 +35,9 @@ namespace TranslationsWebApplication.Controllers
             }
 
             var topic = await _context.Topics
+                .Include(t => t.Orders) // Переконайтеся, що у вашій моделі Topic є навігаційна властивість Orders
                 .FirstOrDefaultAsync(m => m.TopicId == id);
+
             if (topic == null)
             {
                 return NotFound();
@@ -149,14 +151,14 @@ namespace TranslationsWebApplication.Controllers
             {
                 _context.Topics.Remove(topic);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool TopicExists(int id)
         {
-          return (_context.Topics?.Any(e => e.TopicId == id)).GetValueOrDefault();
+            return (_context.Topics?.Any(e => e.TopicId == id)).GetValueOrDefault();
         }
     }
 }
