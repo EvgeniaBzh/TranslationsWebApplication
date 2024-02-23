@@ -29,11 +29,39 @@ namespace TranslationsWebApplication.Controllers
 
             ViewData["TopicId"] = topics;
 
-            return _context.Orders != null ?
-                            View(await _context.Orders.Include(o => o.Topic).ToListAsync()) : // Переконайтеся, що ви використовуєте Include для завантаження пов'язаних даних
-                            Problem("Entity set 'DbtranslationAgencyContext.Orders'  is null.");
-        }
+            var types = await _context.Types.Select(t => new SelectListItem
+            {
+                Value = t.TypeId.ToString(),
+                Text = t.TypeName
+            }).ToListAsync();
 
+            ViewData["TypeId"] = types;
+
+            var originalLangauges = await _context.Languages.Select(t => new SelectListItem
+            {
+                Value = t.LanguageId.ToString(),
+                Text = t.LanguageName
+            }).ToListAsync();
+
+            ViewData["OriginalLanguageId"] = originalLangauges;
+
+            var translationLangauges = await _context.Languages.Select(t => new SelectListItem
+            {
+                Value = t.LanguageId.ToString(),
+                Text = t.LanguageName
+            }).ToListAsync();
+
+            ViewData["TranslationLangauge"] = translationLangauges;
+
+            return _context.Orders != null ?
+                View(await _context.Orders
+                    .Include(o => o.Topic)
+                    .Include(o => o.Type)
+                    .Include(o => o.OriginalLanguage)
+                    .Include(o => o.TranslationLanguage)
+                    .ToListAsync()) :
+                Problem("Entity set 'DbtranslationAgencyContext.Orders'  is null.");
+        }
 
         // GET: Orders/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -56,7 +84,11 @@ namespace TranslationsWebApplication.Controllers
         // GET: Orders/Create
         public IActionResult Create()
         {
+            ViewData["TypeId"] = new SelectList(_context.Types, "TypeId", "TypeName");
             ViewData["TopicId"] = new SelectList(_context.Topics, "TopicId", "TopicName");
+            ViewData["OriginalLanguageId"] = new SelectList(_context.Languages, "LanguageId", "LanguageName");
+            ViewData["TranslationLanguageId"] = new SelectList(_context.Languages, "LanguageId", "LanguageName");
+
             return View();
         }
 
@@ -65,7 +97,7 @@ namespace TranslationsWebApplication.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("OrderId,OrderName, TopicId, OrderScope,OrderPrice,OrderSubmissionDate,OrderStatus")] Order order)
+        public async Task<IActionResult> Create([Bind("OrderId,OrderName, OriginalLanguageId, TranslationLanguageId, TypeId, TopicId, OrderScope,OrderPrice,OrderSubmissionDate,OrderStatus")] Order order)
         {
             if (ModelState.IsValid)
             {
@@ -89,7 +121,11 @@ namespace TranslationsWebApplication.Controllers
             {
                 return NotFound();
             }
-            ViewData["TopicId"] = new SelectList(_context.Topics, "TopicId", "TopicName", order.TopicId); // Додаємо цей рядок
+            ViewData["TypeId"] = new SelectList(_context.Types, "TypeId", "TypeName", order.TypeId);
+            ViewData["TopicId"] = new SelectList(_context.Topics, "TopicId", "TopicName", order.TopicId);
+            ViewData["OriginalLanguageId"] = new SelectList(_context.Languages, "LanguageId", "LanguageName", order.OriginalLanguageId);
+            ViewData["TranslationLanguageId"] = new SelectList(_context.Languages, "LanguageId", "LanguageName", order.TranslationLanguageId);
+
             return View(order);
         }
 
@@ -98,7 +134,7 @@ namespace TranslationsWebApplication.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("OrderId,OrderName,TopicId, OrderScope,OrderPrice,OrderSubmissionDate,OrderStatus")] Order order)
+        public async Task<IActionResult> Edit(int id, [Bind("OrderId,OrderName, OriginalLanguageId, TranslationLanguageId, TypeId, TopicId, OrderScope,OrderPrice,OrderSubmissionDate,OrderStatus")] Order order)
         {
             if (id != order.OrderId)
             {

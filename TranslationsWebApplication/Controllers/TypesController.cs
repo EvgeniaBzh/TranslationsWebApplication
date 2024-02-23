@@ -9,95 +9,93 @@ using TranslationsWebApplication.Models;
 
 namespace TranslationsWebApplication.Controllers
 {
-    public class TopicsController : Controller
+    public class TypesController : Controller
     {
         private readonly DbtranslationAgencyContext _context;
 
-        public TopicsController(DbtranslationAgencyContext context)
+        public TypesController(DbtranslationAgencyContext context)
         {
             _context = context;
         }
 
-        // GET: Topics
+        // GET: Types
         public async Task<IActionResult> Index()
         {
-            return _context.Topics != null ?
-                        View(await _context.Topics.ToListAsync()) :
-                        Problem("Entity set 'DbtranslationAgencyContext.Topics'  is null.");
+              return _context.Types != null ? 
+                          View(await _context.Types.ToListAsync()) :
+                          Problem("Entity set 'DbtranslationAgencyContext.Types'  is null.");
         }
 
-        // GET: Topics/Details/5
+        // GET: Types/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Topics == null)
+            if (id == null || _context.Types == null)
             {
                 return NotFound();
             }
-
-            var topic = await _context.Topics
-                 .Include(t => t.Orders)
-                     .ThenInclude(o => o.Type)
+            var type = await _context.Types
+                .Include(t => t.Orders)
+                    .ThenInclude(o => o.Topic)
                 .Include(t => t.Orders)
                     .ThenInclude(o => o.OriginalLanguage)
                 .Include(t => t.Orders)
                     .ThenInclude(o => o.TranslationLanguage)
-         .FirstOrDefaultAsync(m => m.TopicId == id);
+                .FirstOrDefaultAsync(m => m.TypeId == id);
 
-
-            if (topic == null)
+            if (type == null)
             {
                 return NotFound();
             }
 
-            return View(topic);
+            return View(type);
         }
 
-        // GET: Topics/Create
+        // GET: Types/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Topics/Create
+        // POST: Types/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("TopicId,TopicName")] Topic topic)
+        public async Task<IActionResult> Create([Bind("TypeId,TypeName")] TranslationsWebApplication.Models.Type type)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(topic);
+                _context.Add(type);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(topic);
+            return View(type);
         }
 
-        // GET: Topics/Edit/5
+        // GET: Types/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Topics == null)
+            if (id == null || _context.Types == null)
             {
                 return NotFound();
             }
 
-            var topic = await _context.Topics.FindAsync(id);
-            if (topic == null)
+            var @type = await _context.Types.FindAsync(id);
+            if (@type == null)
             {
                 return NotFound();
             }
-            return View(topic);
+            return View(@type);
         }
 
-        // POST: Topics/Edit/5
+        // POST: Types/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("TopicId,TopicName")] Topic topic)
+        public async Task<IActionResult> Edit(int id, [Bind("TypeId,TypeName")] TranslationsWebApplication.Models.Type type)
         {
-            if (id != topic.TopicId)
+            if (id != type.TypeId)
             {
                 return NotFound();
             }
@@ -106,12 +104,12 @@ namespace TranslationsWebApplication.Controllers
             {
                 try
                 {
-                    _context.Update(topic);
+                    _context.Update(type);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!TopicExists(topic.TopicId))
+                    if (!TypeExists(type.TypeId))
                     {
                         return NotFound();
                     }
@@ -122,49 +120,49 @@ namespace TranslationsWebApplication.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(topic);
+            return View(type);
         }
 
-        // GET: Topics/Delete/5
+        // GET: Types/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Topics == null)
+            if (id == null || _context.Types == null)
             {
                 return NotFound();
             }
 
-            var topic = await _context.Topics
-                .FirstOrDefaultAsync(m => m.TopicId == id);
-            if (topic == null)
+            var type = await _context.Types
+                .FirstOrDefaultAsync(m => m.TypeId == id);
+            if (type == null)
             {
                 return NotFound();
             }
 
-            return View(topic);
+            return View(type);
         }
 
-        // POST: Topics/Delete/5
+        // POST: Types/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Topics == null)
+            if (_context.Types == null)
             {
-                return Problem("Entity set 'DbtranslationAgencyContext.Topics'  is null.");
+                return Problem("Entity set 'DbtranslationAgencyContext.Types'  is null.");
             }
-            var topic = await _context.Topics.FindAsync(id);
-            if (topic != null)
+            var type = await _context.Types.FindAsync(id);
+            if (type != null)
             {
-                _context.Topics.Remove(topic);
+                _context.Types.Remove(type);
             }
-
+            
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool TopicExists(int id)
+        private bool TypeExists(int id)
         {
-            return (_context.Topics?.Any(e => e.TopicId == id)).GetValueOrDefault();
+          return (_context.Types?.Any(e => e.TypeId == id)).GetValueOrDefault();
         }
     }
 }

@@ -1,0 +1,50 @@
+﻿@model IEnumerable<TranslationsWebApplication.Models.Order>
+
+@{
+    ViewData["Title"] = "Orders";
+}
+
+<h1>Orders Details</h1>
+
+@if (Model != null && Model.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Order Name</th>
+                <th>Original Language</th>
+                <th>Translation Language</th>
+                <th>Type</th>
+                <th>Topic</th>
+                <th>Scope</th>
+                <th>Price</th>
+                <th>Submission Date</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var order in Model)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(_ => order.OrderName)</td>
+                    <td>@Html.DisplayFor(_ => order.OriginalLanguage.LanguageName)</td>
+                    <td>@Html.DisplayFor(_ => order.TranslationLanguage.LanguageName)</td>
+                    <td>@Html.DisplayFor(_ => order.Type.TypeName)</td>
+                    <td>@Html.DisplayFor(_ => order.Topic.TopicName)</td>
+                    <td>@Html.DisplayFor(_ => order.OrderScope)</td>
+                    <td>@Html.DisplayFor(_ => order.OrderPrice)</td>
+                    <td>@Html.DisplayFor(_ => order.OrderSubmissionDate)</td>
+                    <td>@Html.DisplayFor(_ => order.OrderStatus)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No orders found.</p>
+}
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>

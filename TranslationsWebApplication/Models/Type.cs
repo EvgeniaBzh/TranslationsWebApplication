@@ -11,5 +11,5 @@ public partial class Type
     [Display(Name = "Тип")]
     public string TypeName { get; set; } = null!;
 
-    //public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
+    public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
 }

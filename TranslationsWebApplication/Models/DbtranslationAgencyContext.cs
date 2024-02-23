@@ -109,24 +109,24 @@ public partial class DbtranslationAgencyContext : DbContext
                 .HasForeignKey(d => d.TopicId)
                 .HasConstraintName("FK_Orders_Topic");
 
-            /*entity.HasOne(d => d.Translator).WithMany(p => p.Orders)
-               .HasForeignKey(d => d.TranslatorId)
-               .HasConstraintName("FK_Orders_D_Translators");
+           //entity.HasOne(d => d.Translator).WithMany(p => p.Orders)
+               //.HasForeignKey(d => d.TranslatorId)
+               //.HasConstraintName("FK_Orders_D_Translators");
 
            entity.HasOne(d => d.Type).WithMany(p => p.Orders)
                .HasForeignKey(d => d.TypeId)
                .OnDelete(DeleteBehavior.ClientSetNull)
                .HasConstraintName("FK_Orders_Types");
 
-           entity.HasOne(d => d.OriginalLanguage).WithMany(p => p.OrderOriginalLanguages)
+            entity.HasOne(d => d.OriginalLanguage).WithMany(p => p.OriginalLanguage)
                .HasForeignKey(d => d.OriginalLanguageId)
                .OnDelete(DeleteBehavior.ClientSetNull)
                .HasConstraintName("FK_Orders_Languages");
 
-           entity.HasOne(d => d.TranslationLanguage).WithMany(p => p.OrderTranslationLanguages)
+           entity.HasOne(d => d.TranslationLanguage).WithMany(p => p.TranslationLanguage)
                .HasForeignKey(d => d.TranslationLanguageId)
                .OnDelete(DeleteBehavior.ClientSetNull)
-               .HasConstraintName("FK_Orders_Languages2");*/
+               .HasConstraintName("FK_Orders_Languages2");
         });
 
         modelBuilder.Entity<PersonalAccount>(entity =>

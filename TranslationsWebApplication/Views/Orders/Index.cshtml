@@ -17,6 +17,15 @@
                 @Html.DisplayNameFor(model => model.OrderName)
             </th>
             <th>
+                @Html.DisplayNameFor(model => model.OriginalLanguage.LanguageName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TranslationLanguage.LanguageName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Type.TypeName)
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.Topic.TopicName)
             </th>
             <th>
@@ -40,6 +49,15 @@
             <tr>
                 <td>
                     @Html.DisplayFor(modelItem => item.OrderName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.OriginalLanguage.LanguageName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TranslationLanguage.LanguageName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Type.TypeName)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Topic.TopicName)

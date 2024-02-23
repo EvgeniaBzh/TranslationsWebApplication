@@ -1,4 +1,4 @@
-﻿@model TranslationsWebApplication.Models.Topic
+﻿@model TranslationsWebApplication.Models.Type
 
 @{
     ViewData["Title"] = "Details";
@@ -11,10 +11,10 @@
     <hr />
     <dl class="row">
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.TopicName)
+            @Html.DisplayNameFor(model => model.TypeName)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.TopicName)
+            @Html.DisplayFor(model => model.TypeName)
         </dd>
     </dl>
 </div>
@@ -60,6 +60,6 @@ else
 }
 
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.TopicId">Edit</a> |
+    <a asp-action="Edit" asp-route-id="@Model.TypeId">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>
