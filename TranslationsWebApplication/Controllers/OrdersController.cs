@@ -97,10 +97,22 @@ namespace TranslationsWebApplication.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("OrderId,OrderName, OriginalLanguageId, TranslationLanguageId, TypeId, TopicId, OrderScope,OrderPrice,OrderSubmissionDate,OrderStatus")] Order order)
+        public async Task<IActionResult> Create([Bind("OrderId,OrderName,OriginalLanguageId,TranslationLanguageId,TypeId,TopicId,OrderScope,OrderPrice,FileName,OrderSubmissionDate,OrderStatus")] Order order, IFormFile fileUpload)
         {
             if (ModelState.IsValid)
             {
+                if (fileUpload != null && fileUpload.Length > 0)
+                {
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        await fileUpload.CopyToAsync(memoryStream);
+
+                        // Зберігаємо файл у байтовому масиві
+                        order.FileData = memoryStream.ToArray();
+                        order.FileName = fileUpload.FileName; // Можна встановити ім'я файлу тут
+                    }
+                }
+
                 _context.Add(order);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -108,6 +120,7 @@ namespace TranslationsWebApplication.Controllers
             return View(order);
         }
 
+        // GET: Orders/Edit/5
         // GET: Orders/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -125,16 +138,18 @@ namespace TranslationsWebApplication.Controllers
             ViewData["TopicId"] = new SelectList(_context.Topics, "TopicId", "TopicName", order.TopicId);
             ViewData["OriginalLanguageId"] = new SelectList(_context.Languages, "LanguageId", "LanguageName", order.OriginalLanguageId);
             ViewData["TranslationLanguageId"] = new SelectList(_context.Languages, "LanguageId", "LanguageName", order.TranslationLanguageId);
+            ViewData["FileName"] = order.FileName; // Додаємо це для відображення імені файлу
 
             return View(order);
         }
+
 
         // POST: Orders/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("OrderId,OrderName, OriginalLanguageId, TranslationLanguageId, TypeId, TopicId, OrderScope,OrderPrice,OrderSubmissionDate,OrderStatus")] Order order)
+        public async Task<IActionResult> Edit(int id, [Bind("OrderId,OrderName,OriginalLanguageId,TranslationLanguageId,TypeId,TopicId,OrderScope,OrderPrice,OrderSubmissionDate,OrderStatus")] Order order)
         {
             if (id != order.OrderId)
             {
@@ -145,7 +160,27 @@ namespace TranslationsWebApplication.Controllers
             {
                 try
                 {
-                    _context.Update(order);
+                    // Оновлюємо тільки властивості, що не стосуються файлу
+                    var orderToUpdate = await _context.Orders.FirstOrDefaultAsync(o => o.OrderId == id);
+
+                    if (orderToUpdate == null)
+                    {
+                        return NotFound();
+                    }
+
+                    orderToUpdate.OrderName = order.OrderName;
+                    orderToUpdate.OriginalLanguageId = order.OriginalLanguageId;
+                    orderToUpdate.TranslationLanguageId = order.TranslationLanguageId;
+                    orderToUpdate.TypeId = order.TypeId;
+                    orderToUpdate.TopicId = order.TopicId;
+                    orderToUpdate.OrderScope = order.OrderScope;
+                    orderToUpdate.OrderPrice = order.OrderPrice;
+                    orderToUpdate.OrderSubmissionDate = order.OrderSubmissionDate;
+                    orderToUpdate.OrderStatus = order.OrderStatus;
+
+                    // Не оновлюємо order.FileData та order.FileName
+
+                    _context.Update(orderToUpdate);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -163,6 +198,7 @@ namespace TranslationsWebApplication.Controllers
             }
             return View(order);
         }
+
 
         // GET: Orders/Delete/5
         public async Task<IActionResult> Delete(int? id)
@@ -205,5 +241,23 @@ namespace TranslationsWebApplication.Controllers
         {
             return (_context.Orders?.Any(e => e.OrderId == id)).GetValueOrDefault();
         }
+
+        public async Task<IActionResult> DownloadFile(int? id)
+        {
+            if (id == null)
+            {
+                return Content("id not provided");
+            }
+
+            var order = await _context.Orders.FirstOrDefaultAsync(m => m.OrderId == id);
+
+            if (order == null || order.FileData == null || order.FileName == null)
+            {
+                return Content("file not found");
+            }
+
+            return File(order.FileData, "application/octet-stream", order.FileName);
+        }
+
     }
 }

@@ -95,6 +95,7 @@ public partial class DbtranslationAgencyContext : DbContext
         modelBuilder.Entity<Order>(entity =>
         {
             entity.Property(e => e.OrderName).HasMaxLength(50);
+
             entity.Property(e => e.OrderStatus)
                 .HasMaxLength(10)
                 .IsFixedLength();
@@ -127,6 +128,10 @@ public partial class DbtranslationAgencyContext : DbContext
                .HasForeignKey(d => d.TranslationLanguageId)
                .OnDelete(DeleteBehavior.ClientSetNull)
                .HasConstraintName("FK_Orders_Languages2");
+
+            entity.Property(e => e.FileName).HasMaxLength(255);
+            entity.Property(e => e.FileData).HasColumnType("varbinary(max)");
+
         });
 
         modelBuilder.Entity<PersonalAccount>(entity =>

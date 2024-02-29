@@ -34,6 +34,7 @@
                 <th>@Html.DisplayNameFor(model => model.Orders.First().OrderPrice)</th>
                 <th>@Html.DisplayNameFor(model => model.Orders.First().OrderSubmissionDate)</th>
                 <th>@Html.DisplayNameFor(model => model.Orders.First().OrderStatus)</th>
+                <th>@Html.DisplayNameFor(model => model.Orders.First().FileName)</th>
             </tr>
         </thead>
         <tbody>
@@ -49,6 +50,7 @@
                     <td>@Html.DisplayFor(_ => order.OrderPrice)</td>
                     <td>@Html.DisplayFor(_ => order.OrderSubmissionDate)</td>
                     <td>@Html.DisplayFor(_ => order.OrderStatus)</td>
+                    <td>@Html.DisplayFor(_ => order.FileName)</td>
                 </tr>
             }
         </tbody>

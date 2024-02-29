@@ -21,6 +21,9 @@ public partial class Order
 
     public double OrderPrice { get; set; }
 
+    public string? FileName { get; set; }
+    public byte[]? FileData { get; set; }
+
     public DateTime OrderSubmissionDate { get; set; }
 
     public string OrderStatus { get; set; } = null!;
