@@ -97,7 +97,7 @@ namespace TranslationsWebApplication.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("OrderId,OrderName,OriginalLanguageId,TranslationLanguageId,TypeId,TopicId,OrderScope,OrderPrice,FileName,OrderSubmissionDate,OrderStatus")] Order order, IFormFile fileUpload)
+        public async Task<IActionResult> Create([Bind("OrderId,OrderName,OriginalLanguageId,TranslationLanguageId,TypeId,TopicId,OrderScope,OrderPrice,FileName,OrderSubmissionDate")] Order order, IFormFile fileUpload)
         {
             if (ModelState.IsValid)
             {
@@ -107,11 +107,13 @@ namespace TranslationsWebApplication.Controllers
                     {
                         await fileUpload.CopyToAsync(memoryStream);
 
-                        // Зберігаємо файл у байтовому масиві
+                        // Store the file in a byte array
                         order.FileData = memoryStream.ToArray();
-                        order.FileName = fileUpload.FileName; // Можна встановити ім'я файлу тут
+                        order.FileName = fileUpload.FileName; // You can set the file name here
                     }
                 }
+
+                order.OrderStatus = OrderStatus.Offer;
 
                 _context.Add(order);
                 await _context.SaveChangesAsync();
@@ -120,11 +122,9 @@ namespace TranslationsWebApplication.Controllers
             return View(order);
         }
 
-        // GET: Orders/Edit/5
-        // GET: Orders/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Orders == null)
+            if (id == null)
             {
                 return NotFound();
             }
@@ -134,53 +134,50 @@ namespace TranslationsWebApplication.Controllers
             {
                 return NotFound();
             }
+
+            // Перевіряємо статус замовлення
+            if (order.OrderStatus == OrderStatus.InProgress || order.OrderStatus == OrderStatus.Done)
+            {
+                TempData["EditMessage"] = "Редагування замовлення з данним статусом неможливе.";
+                return RedirectToAction(nameof(Index));
+            }
+
             ViewData["TypeId"] = new SelectList(_context.Types, "TypeId", "TypeName", order.TypeId);
             ViewData["TopicId"] = new SelectList(_context.Topics, "TopicId", "TopicName", order.TopicId);
             ViewData["OriginalLanguageId"] = new SelectList(_context.Languages, "LanguageId", "LanguageName", order.OriginalLanguageId);
             ViewData["TranslationLanguageId"] = new SelectList(_context.Languages, "LanguageId", "LanguageName", order.TranslationLanguageId);
-            ViewData["FileName"] = order.FileName; // Додаємо це для відображення імені файлу
 
             return View(order);
         }
 
 
         // POST: Orders/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("OrderId,OrderName,OriginalLanguageId,TranslationLanguageId,TypeId,TopicId,OrderScope,OrderPrice,OrderSubmissionDate,OrderStatus")] Order order)
+        public async Task<IActionResult> Edit(int id, [Bind("OrderId,OrderName,OriginalLanguageId,TranslationLanguageId,TypeId,TopicId,OrderScope,OrderPrice,FileName,OrderSubmissionDate")] Order order)
         {
             if (id != order.OrderId)
             {
                 return NotFound();
             }
 
+            var existingOrder = await _context.Orders.AsNoTracking().FirstOrDefaultAsync(o => o.OrderId == id);
+            if (existingOrder == null)
+            {
+                return NotFound();
+            }
+
+            // Перевіряємо статус існуючого замовлення
+            if (existingOrder.OrderStatus == OrderStatus.InProgress || existingOrder.OrderStatus == OrderStatus.Done)
+            {
+                return RedirectToAction(nameof(Details), new { id = id });
+            }
+
             if (ModelState.IsValid)
             {
                 try
                 {
-                    // Оновлюємо тільки властивості, що не стосуються файлу
-                    var orderToUpdate = await _context.Orders.FirstOrDefaultAsync(o => o.OrderId == id);
-
-                    if (orderToUpdate == null)
-                    {
-                        return NotFound();
-                    }
-
-                    orderToUpdate.OrderName = order.OrderName;
-                    orderToUpdate.OriginalLanguageId = order.OriginalLanguageId;
-                    orderToUpdate.TranslationLanguageId = order.TranslationLanguageId;
-                    orderToUpdate.TypeId = order.TypeId;
-                    orderToUpdate.TopicId = order.TopicId;
-                    orderToUpdate.OrderScope = order.OrderScope;
-                    orderToUpdate.OrderPrice = order.OrderPrice;
-                    orderToUpdate.OrderSubmissionDate = order.OrderSubmissionDate;
-                    orderToUpdate.OrderStatus = order.OrderStatus;
-
-                    // Не оновлюємо order.FileData та order.FileName
-
-                    _context.Update(orderToUpdate);
+                    _context.Update(order);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -196,6 +193,9 @@ namespace TranslationsWebApplication.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+
+            // Ваш код для налаштування ViewData за потребою
+
             return View(order);
         }
 
@@ -258,6 +258,75 @@ namespace TranslationsWebApplication.Controllers
 
             return File(order.FileData, "application/octet-stream", order.FileName);
         }
+
+        // GET: Orders/Respond/5
+        public async Task<IActionResult> Respond(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var order = await _context.Orders.FindAsync(id);
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            order.OrderStatus = OrderStatus.InProgress; // Позначаємо, що користувач відгукнувся
+            await _context.SaveChangesAsync();
+
+            // Перенаправляємо користувача до деталей замовлення, де тепер буде доступна кнопка Submit
+            return RedirectToAction(nameof(Details), new { id = id });
+        }
+
+
+        // GET: Orders/Submit/5
+        public async Task<IActionResult> Submit(int? id)
+        {
+            if (id == null || _context.Orders == null)
+            {
+                return NotFound();
+            }
+
+            var order = await _context.Orders.FindAsync(id);
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            return View(order);
+        }
+
+        // POST: Orders/Submit/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Submit(int id, IFormFile submittedFile)
+        {
+            var order = await _context.Orders.FirstOrDefaultAsync(o => o.OrderId == id);
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            if (submittedFile != null && submittedFile.Length > 0)
+            {
+                using (var memoryStream = new MemoryStream())
+                {
+                    await submittedFile.CopyToAsync(memoryStream);
+                    order.SubmittedFileData = memoryStream.ToArray();
+                    order.SubmittedFileName = submittedFile.FileName;
+                }
+
+                order.OrderStatus = OrderStatus.Done; // Змінити статус на "Завершено"
+
+                _context.Update(order);
+                await _context.SaveChangesAsync();
+            }
+
+            return RedirectToAction(nameof(Details), new { id = id });
+        }
+
 
     }
 }

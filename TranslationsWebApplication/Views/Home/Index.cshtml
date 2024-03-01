@@ -1,15 +1,67 @@
-﻿@{
+﻿
+@{
     ViewData["Title"] = "Smart raccoon";
 }
+<html>
+    <head>
+        <style>
+            html {
+                font-size: 16px;
+            }
 
-<div class="text-center">
-    <h1 class="display-4">Вітаємо на Smart raccoon!</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+            @@media (min-width: 768px) {
+                html {
+                    font-size: 16px;
+                }
+            }
 
-    <div>
-        <a class="btn btn-primary" href="@Url.Action("Index", "Orders")">Переглянути замовлення</a>
-        <a class="btn btn-secondary" href="@Url.Action("Index", "Topics")">Переглянути теми</a>
-        <a class="btn btn-secondary" href="@Url.Action("Index", "Types")">Переглянути типи</a>
-        <a class="btn btn-secondary" href="@Url.Action("Index", "Languages")">Переглянути мови</a>
+            .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+                box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+            }
+
+            html {
+                position: relative;
+                min-height: 100%;
+            }
+
+            body {
+                margin-bottom: 60px;
+                background: url('ffonn.jpg') no-repeat center center;
+                background-size: cover;
+                background-position: center;
+                min-height: 100vh;  
+            }
+
+            .buttons-container {
+                padding-top: 174px;
+            }
+
+            .btn-primary, .btn-secondary {
+                background-color: white;
+                color: #4A0D5B;
+                border: 1px solid transparent;
+            }
+
+            .btn-primary:hover, .btn-secondary:hover {
+                background-color: #888787;
+                color: white;
+            }
+
+            .btn-primary:hover, .btn-secondary:hover {
+                color: white;
+            }
+
+        </style>
+    </head>
+    <body>
+    <div class="text-center background-image">
+
+        <div class="text-center background-image buttons-container">
+            <a class="btn btn-primary" href="@Url.Action("Index", "Orders")">View order</a>
+            <a class="btn btn-secondary" href="@Url.Action("Index", "Topics")">View topics</a>
+            <a class="btn btn-secondary" href="@Url.Action("Index", "Types")">View types</a>
+            <a class="btn btn-secondary" href="@Url.Action("Index", "Languages")">View languages</a>                       
+        </div>
     </div>
-</div>
+    </body>
+</html>

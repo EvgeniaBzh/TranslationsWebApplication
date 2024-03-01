@@ -70,7 +70,16 @@
 </div>
 <div>
     <a asp-action="Edit" asp-route-id="@Model?.OrderId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-    <a asp-action="DownloadFile" asp-route-id="@Model.OrderId">Завантажити файл</a>
-
+    <a asp-action="Index">Back to List</a> |
+    <a asp-action="DownloadFile" asp-route-id="@Model.OrderId">Завантажити файл</a> |
+    @if (Model.OrderStatus == OrderStatus.Offer)
+    {
+        <a asp-action="Respond" asp-route-id="@Model?.OrderId" class="btn btn-primary">Відгукнутися</a>
+    }
+    @if (Model.OrderStatus != OrderStatus.Done)
+    {
+        <div>
+            <button class="btn btn-success" @(Model.OrderStatus != OrderStatus.InProgress ? "disabled" : "") onclick="location.href='@Url.Action("Submit", "Orders", new { id = Model.OrderId })'">Submit</button>
+        </div>
+    }
 </div>

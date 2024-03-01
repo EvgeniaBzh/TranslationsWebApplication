@@ -1,51 +1,118 @@
 ﻿@model IEnumerable<TranslationsWebApplication.Models.Order>
-
 @{
-    ViewData["Title"] = "Index";
+    
 }
 
-<h1>Index</h1>
+@if (TempData["EditMessage"] != null)
+{
+    <div class="alert alert-warning" role="alert">
+        @TempData["EditMessage"]
+    </div>
+}
+
+<style>
+    @@import url('https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&display=swap');
+
+    .mochiy-pop-one-regular {
+        font-family: "Mochiy Pop One", sans-serif;
+        font-weight: 400;
+        font-style: normal;
+    }
+
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        .table th, .table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        .table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .table tr:nth-child(odd) {
+            background-color: #ffffff;
+        }
+
+        .table th {
+            padding-top: 12px;
+            padding-bottom: 12px;
+            text-align: left;
+            background-color: #4A0D5B;
+            color: white;
+        }
+
+    .action-link {
+        color: black;
+        text-decoration: none;
+    }
+
+    .action-link:hover {
+        color: #A12F86;
+    }
+
+
+    .buttons-container {
+        padding-top: 174px;
+    }
+
+    .btn-primary, .btn-secondary {
+        background-color: white;
+        color: #4A0D5B;
+        border: 1px solid transparent;
+    }
+
+    .btn-primary:hover, .btn-secondary:hover {
+        background-color: #888787;
+        color: white;
+    }
+
+    .btn-primary:hover, .btn-secondary:hover {
+        color: white;
+    }
+
+    html {
+        position: relative;
+        min-height: 100%;
+    }
+
+    body {
+        margin-bottom: 60px;
+        background: url('ffonn2.jpg') no-repeat center center;
+        background-size: cover;
+        background-position: center;
+        min-height: 100vh;
+    }
+
+</style>
+
+<h1 class="mochiy-pop-one-regular" style="color: #4A0D5B;">Offer List</h1>
 
 <p>
-    <a asp-action="Create" class="btn btn-success" enctype="multipart/form-data">Додати замовлення</a>
+    <a asp-action="Create" class="btn btn-primary" enctype="multipart/form-data">Add order</a>
 </p>
 
 <table class="table">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.OrderName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.OriginalLanguage.LanguageName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TranslationLanguage.LanguageName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Type.TypeName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Topic.TopicName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.OrderScope)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.OrderPrice)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.OrderSubmissionDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.OrderStatus)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FileName)
-            </th>
-            <th></th>
+            <th>Name</th>
+            <th>Original language</th>
+            <th>Translation language</th>
+            <th>Type</th>
+            <th>Topic</th>
+            <th>Scope</th>
+            <th>Price</th>
+            <th>Submission date</th>
+            <th>Status</th>
+            <th>File</th>
+            <th>Actions</th>
         </tr>
+
     </thead>
+
     <tbody>
         @foreach (var item in Model)
         {
@@ -81,9 +148,9 @@
                     @Html.DisplayFor(modelItem => item.FileName)
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.OrderId">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.OrderId">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.OrderId">Delete</a>
+                    <a asp-action="Edit" asp-route-id="@item.OrderId" class="action-link">Edit</a> 
+                    <a asp-action="Details" asp-route-id="@item.OrderId" class="action-link">View</a> 
+                    <a asp-action="Delete" asp-route-id="@item.OrderId" class="action-link">Delete</a>
                 </td>
             </tr>
         }

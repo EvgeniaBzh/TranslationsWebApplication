@@ -9,64 +9,77 @@
 <h4>Order</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-12">
         <form asp-action="Create" method="post" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="OrderName" class="control-label"></label>
-                <input asp-for="OrderName" class="form-control" />
-                <span asp-validation-for="OrderName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="OriginalLanguageId" class="control-label">OriginalLanguage</label>
-                <select asp-for="OriginalLanguageId" class="form-control" asp-items="ViewBag.OriginalLanguageId"></select>
-                <span asp-validation-for="OriginalLanguageId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="TranslationLanguageId" class="control-label">TranslationLanguage</label>
-                <select asp-for="TranslationLanguageId" class="form-control" asp-items="ViewBag.TranslationLanguageId"></select>
-                <span asp-validation-for="TranslationLanguageId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="TypeId" class="control-label">Type</label>
-                <select asp-for="TypeId" class="form-control" asp-items="ViewBag.TypeId"></select>
-                <span asp-validation-for="TypeId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="TopicId" class="control-label">Topic</label>
-                <select asp-for="TopicId" class="form-control" asp-items="ViewBag.TopicId"></select>
-                <span asp-validation-for="TopicId" class="text-danger"></span>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="OrderName" class="control-label"></label>
+                        <input asp-for="OrderName" class="form-control" />
+                        <span asp-validation-for="OrderName" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label asp-for="TypeId" class="control-label">Type</label>
+                        <select asp-for="TypeId" class="form-control" asp-items="ViewBag.TypeId"></select>
+                        <span asp-validation-for="TypeId" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label asp-for="TopicId" class="control-label">Topic</label>
+                        <select asp-for="TopicId" class="form-control" asp-items="ViewBag.TopicId"></select>
+                        <span asp-validation-for="TopicId" class="text-danger"></span>
+                    </div>
+                </div>
             </div>
 
-            <div class="form-group">
-                <label asp-for="OrderScope" class="control-label"></label>
-                <input asp-for="OrderScope" class="form-control" />
-                <span asp-validation-for="OrderScope" class="text-danger"></span>
+            <div class="row">
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label asp-for="OriginalLanguageId" class="control-label">Original Language</label>
+                        <select asp-for="OriginalLanguageId" class="form-control" asp-items="ViewBag.OriginalLanguageId"></select>
+                        <span asp-validation-for="OriginalLanguageId" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label asp-for="TranslationLanguageId" class="control-label">Translation Language</label>
+                        <select asp-for="TranslationLanguageId" class="form-control" asp-items="ViewBag.TranslationLanguageId"></select>
+                        <span asp-validation-for="TranslationLanguageId" class="text-danger"></span>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="OrderPrice" class="control-label"></label>
-                <input asp-for="OrderPrice" class="form-control" />
-                <span asp-validation-for="OrderPrice" class="text-danger"></span>
+            <div class="row">
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label asp-for="OrderScope" class="control-label"></label>
+                        <input asp-for="OrderScope" class="form-control" />
+                        <span asp-validation-for="OrderScope" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label asp-for="OrderPrice" class="control-label"></label>
+                        <input asp-for="OrderPrice" class="form-control" />
+                        <span asp-validation-for="OrderPrice" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label asp-for="OrderSubmissionDate" class="control-label"></label>
+                        <input asp-for="OrderSubmissionDate" class="form-control" />
+                        <span asp-validation-for="OrderSubmissionDate" class="text-danger"></span>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="OrderSubmissionDate" class="control-label"></label>
-                <input asp-for="OrderSubmissionDate" class="form-control" />
-                <span asp-validation-for="OrderSubmissionDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="OrderStatus" class="control-label"></label>
-                <input asp-for="OrderStatus" class="form-control" />
-                <span asp-validation-for="OrderStatus" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="FileName" class="control-label"></label>
-                <input asp-for="FileName" class="form-control" />
-                <span asp-validation-for="FileName" class="text-danger"></span>
-            </div>
+            <div class="col-md-4">
             <div class="form-group">
                 <label for="fileUpload" class="control-label">File Upload</label>
                 <input type="file" id="fileUpload" name="fileUpload" class="form-control" />
+            </div>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
