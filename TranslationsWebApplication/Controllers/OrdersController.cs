@@ -318,7 +318,7 @@ namespace TranslationsWebApplication.Controllers
                     order.SubmittedFileName = submittedFile.FileName;
                 }
 
-                order.OrderStatus = OrderStatus.Done; // Змінити статус на "Завершено"
+                order.OrderStatus = OrderStatus.Done;
 
                 _context.Update(order);
                 await _context.SaveChangesAsync();
