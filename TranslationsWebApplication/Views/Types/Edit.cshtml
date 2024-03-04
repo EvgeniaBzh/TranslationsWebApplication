@@ -4,9 +4,60 @@
     ViewData["Title"] = "Edit";
 }
 
-<h1>Edit</h1>
+<style>
+    @@import url('https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&display=swap');
 
-<h4>Type</h4>
+    .mochiy-pop-one-regular {
+        font-family: "Mochiy Pop One", sans-serif;
+        font-weight: 400;
+        font-style: normal;
+    }
+
+    h1, label, input, select, .btn, a {
+        font-size: 20px;
+    }
+
+    input, select, .btn {
+        height: 45px;
+        padding: 10px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .row {
+        margin-bottom: 25px;
+    }
+
+    .btn-create {
+        background-color: #4A0D5B;
+        color: white;
+        border: none;
+        transition: background-color 0.3s, color 0.3s;
+    }
+
+        .btn-create:hover {
+            background-color: gray;
+            color: black;
+        }
+
+    html {
+        position: relative;
+        min-height: 100%;
+    }
+
+    body {
+        margin-bottom: 60px;
+        background: url('../../css/ffonn4.jpg') no-repeat center center;
+        background-size: cover;
+        background-position: center;
+        min-height: 100vh;
+    }
+</style>
+
+<h1 class="mochiy-pop-one-regular" style="color: #4A0D5B; font-size: 40px;">Edit</h1>
+
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -19,14 +70,14 @@
                 <span asp-validation-for="TypeName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="submit" value="Save" class="btn btn-create" />
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index" class="btn btn-create">Back to List</a>
 </div>
 
 @section Scripts {

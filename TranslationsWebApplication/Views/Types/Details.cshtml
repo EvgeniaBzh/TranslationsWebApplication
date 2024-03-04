@@ -4,16 +4,104 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
+<style>
+    @@import url('https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&display=swap');
+
+    .mochiy-pop-one-regular {
+        font-family: "Mochiy Pop One", sans-serif;
+        font-weight: 400;
+        font-style: normal;
+    }
+
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        .table th, .table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        .table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .table tr:nth-child(odd) {
+            background-color: #ffffff;
+        }
+
+        .table th {
+            padding-top: 12px;
+            padding-bottom: 12px;
+            text-align: left;
+            background-color: #4A0D5B;
+            color: white;
+        }
+
+    .table {
+        width: 80%;
+        margin-right: 20%;
+        border-collapse: collapse;
+    }
+
+
+    .action-link {
+        color: black;
+        text-decoration: none;
+    }
+
+        .action-link:hover {
+            color: #A12F86;
+        }
+
+
+    .btn-create {
+        background-color: #4A0D5B;
+        color: white;
+        border: none;
+        transition: background-color 0.3s, color 0.3s;
+    }
+
+        .btn-create:hover {
+            background-color: gray;
+            color: black;
+        }
+
+    html {
+        position: relative;
+        min-height: 100%;
+    }
+
+    body {
+        margin-bottom: 60px;
+        background: url('../../css/ffonn5.jpg') no-repeat center center;
+        background-size: cover;
+        background-position: center;
+        min-height: 100vh;
+    }
+
+    .dt-white-color {
+        color: white;
+        font-size: 22px;
+    }
+
+    .dt {
+        color: black;
+        font-size: 20px;
+    }
+
+</style>
+
+<h1 class="mochiy-pop-one-regular" style="color: #4A0D5B; font-size: 40px;">Type Details</h1>
 
 <div>
-    <h4>Topic</h4>
     <hr />
     <dl class="row">
-        <dt class="col-sm-2">
+        <dt class="col-sm-2 dt-white-color">
             @Html.DisplayNameFor(model => model.TypeName)
         </dt>
-        <dd class="col-sm-10">
+        <dd class="col-sm-10 dt">
             @Html.DisplayFor(model => model.TypeName)
         </dd>
     </dl>
@@ -35,6 +123,7 @@
                 <th>@Html.DisplayNameFor(model => model.Orders.First().OrderSubmissionDate)</th>
                 <th>@Html.DisplayNameFor(model => model.Orders.First().OrderStatus)</th>
                 <th>@Html.DisplayNameFor(model => model.Orders.First().FileName)</th>
+                <th>@Html.DisplayNameFor(model => model.Orders.First().SubmittedFileName)</th>
             </tr>
         </thead>
         <tbody>
@@ -51,6 +140,7 @@
                     <td>@Html.DisplayFor(_ => order.OrderSubmissionDate)</td>
                     <td>@Html.DisplayFor(_ => order.OrderStatus)</td>
                     <td>@Html.DisplayFor(_ => order.FileName)</td>
+                    <td>@Html.DisplayFor(_ => order.SubmittedFileName)</td>
                 </tr>
             }
         </tbody>
@@ -62,6 +152,6 @@ else
 }
 
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.TypeId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Edit" asp-route-id="@Model.TypeId" class="btn btn-create">Edit</a> |
+    <a asp-action="Index" class="btn btn-create">Back to List</a>
 </div>

@@ -4,11 +4,77 @@
     ViewData["Title"] = "Delete";
 }
 
-<h1>Delete</h1>
+<style>
+    @@import url('https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&display=swap');
+
+    .mochiy-pop-one-regular {
+        font-family: "Mochiy Pop One", sans-serif;
+        font-weight: 400;
+        font-style: normal;
+    }
+
+    h1, label, input, select, .btn, a {
+        font-size: 20px;
+    }
+
+    h1 {
+        font-size: 40px;
+    }
+
+    input, select, .btn {
+        height: 45px;
+        padding: 10px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .row {
+        margin-bottom: 25px;
+    }
+
+    .btn-create {
+        background-color: #4A0D5B;
+        color: white;
+        border: none;
+        transition: background-color 0.3s, color 0.3s;
+    }
+
+        .btn-create:hover {
+            background-color: gray;
+            color: black;
+        }
+
+    html {
+        position: relative;
+        min-height: 100%;
+    }
+
+    body {
+        margin-bottom: 60px;
+        background: url('../../css/ffonn7.jpg') no-repeat center center;
+        background-size: cover;
+        background-position: center;
+        min-height: 100vh;
+    }
+
+    dt {
+        color: white;
+        font-size: 22px;
+    }
+
+    dd {
+        font-size: 20px;
+        color: black;
+    }
+</style>
+
+<h1 class="mochiy-pop-one-regular" style="color: #4A0D5B; font-size: 40px;">Delete</h1>
+
 
 <h3>Are you sure you want to delete this?</h3>
 <div>
-    <h4>Topic</h4>
     <hr />
     <dl class="row">
         <dt class="col-sm-2">
@@ -21,7 +87,7 @@
 
     <form asp-action="Delete">
         <input type="hidden" asp-for="TopicId" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
+        <input type="submit" value="Delete" class="btn btn-create" />
+        <a asp-action="Index" class="btn btn-create">Back to List</a>
     </form>
 </div>

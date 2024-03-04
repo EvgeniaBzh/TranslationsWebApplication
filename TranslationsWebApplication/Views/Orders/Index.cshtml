@@ -108,6 +108,7 @@
             <th>Submission date</th>
             <th>Status</th>
             <th>File</th>
+            <th>Submitted file</th>
             <th>Actions</th>
         </tr>
 
@@ -146,6 +147,9 @@
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.FileName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SubmittedFileName)
                 </td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.OrderId" class="action-link">Edit</a> 

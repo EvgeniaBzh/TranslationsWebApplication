@@ -65,6 +65,14 @@ namespace TranslationsWebApplication.Controllers
         {
             if (ModelState.IsValid)
             {
+                // Перевірка на унікальність назви теми
+                var typeExists = await _context.Types.AnyAsync(t => t.TypeName == type.TypeName);
+                if (typeExists)
+                {
+                    ModelState.AddModelError("TypeName", "A type with that name already exists.");
+                    return View(type);
+                }
+
                 _context.Add(type);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -102,6 +110,14 @@ namespace TranslationsWebApplication.Controllers
 
             if (ModelState.IsValid)
             {
+                var typeExists = await _context.Types
+                                                 .AnyAsync(t => t.TypeName == type.TypeName && t.TypeId != type.TypeId);
+                if (typeExists)
+                {
+                    ModelState.AddModelError("TypeName", "A type with that name already exists.");
+                    return View(type);
+                }
+
                 try
                 {
                     _context.Update(type);

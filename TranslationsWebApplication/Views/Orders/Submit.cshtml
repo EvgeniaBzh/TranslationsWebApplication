@@ -4,7 +4,68 @@
     ViewData["Title"] = "Submit Translation";
 }
 
-<h2>@ViewData["Title"]</h2>
+@if (ViewData.ModelState["submittedFile"]?.Errors.Count > 0)
+{
+    <div style="color: black;">
+        @ViewData.ModelState["submittedFile"].Errors.FirstOrDefault()?.ErrorMessage
+    </div>
+}
+
+
+<style>
+    @@import url('https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&display=swap');
+
+    .mochiy-pop-one-regular {
+        font-family: "Mochiy Pop One", sans-serif;
+        font-weight: 400;
+        font-style: normal;
+    }
+
+    h1, label, input, select, .btn, a {
+        font-size: 20px;
+    }
+
+    input, select, .btn {
+        height: 45px;
+        padding: 10px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .row {
+        margin-bottom: 25px;
+    }
+
+    .btn-create {
+        background-color: #4A0D5B;
+        color: white;
+        border: none;
+        transition: background-color 0.3s, color 0.3s;
+    }
+
+        .btn-create:hover {
+            background-color: gray;
+            color: black;
+        }
+
+    html {
+        position: relative;
+        min-height: 100%;
+    }
+
+    body {
+        margin-bottom: 60px;
+        background: url('../../../css/ffonn6.jpg') no-repeat center center;
+        background-size: cover;
+        background-position: center;
+        min-height: 100vh;
+    }
+
+</style>
+
+<h1 class="mochiy-pop-one-regular" style="color: #4A0D5B; font-size: 40px;">Submit your work</h1>
 
 <form asp-action="Submit" method="post" enctype="multipart/form-data">
     <input type="hidden" asp-for="OrderId" />
@@ -13,6 +74,6 @@
         <input type="file" class="form-control" name="submittedFile" />
     </div>
     <div class="form-group">
-        <input type="submit" value="Submit" class="btn btn-primary" />
+        <input type="submit" value="Submit" class="btn btn-create" />
     </div>
 </form>

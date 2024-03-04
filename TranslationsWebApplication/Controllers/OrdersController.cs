@@ -72,7 +72,12 @@ namespace TranslationsWebApplication.Controllers
             }
 
             var order = await _context.Orders
+                .Include(o => o.OriginalLanguage)
+                .Include(o => o.TranslationLanguage)
+                .Include(o => o.Type)
+                .Include(o => o.Topic)
                 .FirstOrDefaultAsync(m => m.OrderId == id);
+
             if (order == null)
             {
                 return NotFound();
@@ -138,7 +143,7 @@ namespace TranslationsWebApplication.Controllers
             // Перевіряємо статус замовлення
             if (order.OrderStatus == OrderStatus.InProgress || order.OrderStatus == OrderStatus.Done)
             {
-                TempData["EditMessage"] = "Редагування замовлення з данним статусом неможливе.";
+                TempData["EditMessage"] = "It is not possible to edit an order due to its status.";
                 return RedirectToAction(nameof(Index));
             }
 
@@ -154,20 +159,19 @@ namespace TranslationsWebApplication.Controllers
         // POST: Orders/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("OrderId,OrderName,OriginalLanguageId,TranslationLanguageId,TypeId,TopicId,OrderScope,OrderPrice,FileName,OrderSubmissionDate")] Order order)
+        public async Task<IActionResult> Edit(int id, [Bind("OrderId,OrderName,OriginalLanguageId,TranslationLanguageId,TypeId,TopicId,OrderScope,OrderPrice,OrderSubmissionDate")] Order orderInput)
         {
-            if (id != order.OrderId)
+            if (id != orderInput.OrderId)
             {
                 return NotFound();
             }
 
-            var existingOrder = await _context.Orders.AsNoTracking().FirstOrDefaultAsync(o => o.OrderId == id);
+            var existingOrder = await _context.Orders.FirstOrDefaultAsync(o => o.OrderId == id);
             if (existingOrder == null)
             {
                 return NotFound();
             }
 
-            // Перевіряємо статус існуючого замовлення
             if (existingOrder.OrderStatus == OrderStatus.InProgress || existingOrder.OrderStatus == OrderStatus.Done)
             {
                 return RedirectToAction(nameof(Details), new { id = id });
@@ -177,12 +181,21 @@ namespace TranslationsWebApplication.Controllers
             {
                 try
                 {
-                    _context.Update(order);
+                    existingOrder.OrderName = orderInput.OrderName;
+                    existingOrder.OriginalLanguageId = orderInput.OriginalLanguageId;
+                    existingOrder.TranslationLanguageId = orderInput.TranslationLanguageId;
+                    existingOrder.TypeId = orderInput.TypeId;
+                    existingOrder.TopicId = orderInput.TopicId;
+                    existingOrder.OrderScope = orderInput.OrderScope;
+                    existingOrder.OrderPrice = orderInput.OrderPrice;
+                    existingOrder.OrderSubmissionDate = orderInput.OrderSubmissionDate;
+
+                    _context.Update(existingOrder);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!OrderExists(order.OrderId))
+                    if (!OrderExists(orderInput.OrderId))
                     {
                         return NotFound();
                     }
@@ -194,10 +207,9 @@ namespace TranslationsWebApplication.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            // Ваш код для налаштування ViewData за потребою
-
-            return View(order);
+            return View(orderInput);
         }
+
 
 
         // GET: Orders/Delete/5
@@ -209,7 +221,12 @@ namespace TranslationsWebApplication.Controllers
             }
 
             var order = await _context.Orders
-                .FirstOrDefaultAsync(m => m.OrderId == id);
+               .Include(o => o.OriginalLanguage)
+               .Include(o => o.TranslationLanguage)
+               .Include(o => o.Type)
+               .Include(o => o.Topic)
+               .FirstOrDefaultAsync(m => m.OrderId == id);
+
             if (order == null)
             {
                 return NotFound();
@@ -273,10 +290,9 @@ namespace TranslationsWebApplication.Controllers
                 return NotFound();
             }
 
-            order.OrderStatus = OrderStatus.InProgress; // Позначаємо, що користувач відгукнувся
+            order.OrderStatus = OrderStatus.InProgress;
             await _context.SaveChangesAsync();
 
-            // Перенаправляємо користувача до деталей замовлення, де тепер буде доступна кнопка Submit
             return RedirectToAction(nameof(Details), new { id = id });
         }
 
@@ -299,6 +315,7 @@ namespace TranslationsWebApplication.Controllers
         }
 
         // POST: Orders/Submit/5
+        // POST: Orders/Submit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Submit(int id, IFormFile submittedFile)
@@ -309,24 +326,28 @@ namespace TranslationsWebApplication.Controllers
                 return NotFound();
             }
 
-            if (submittedFile != null && submittedFile.Length > 0)
+            // Check if a file is uploaded
+            if (submittedFile == null || submittedFile.Length == 0)
             {
-                using (var memoryStream = new MemoryStream())
-                {
-                    await submittedFile.CopyToAsync(memoryStream);
-                    order.SubmittedFileData = memoryStream.ToArray();
-                    order.SubmittedFileName = submittedFile.FileName;
-                }
-
-                order.OrderStatus = OrderStatus.Done;
-
-                _context.Update(order);
-                await _context.SaveChangesAsync();
+                // If no file is uploaded, return to the view with an error message
+                ModelState.AddModelError("submittedFile", "Submitting a file is required.");
+                return View(order);
             }
+
+            using (var memoryStream = new MemoryStream())
+            {
+                await submittedFile.CopyToAsync(memoryStream);
+                order.SubmittedFileData = memoryStream.ToArray();
+                order.SubmittedFileName = submittedFile.FileName;
+            }
+
+            order.OrderStatus = OrderStatus.Done;
+
+            _context.Update(order);
+            await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Details), new { id = id });
         }
-
 
     }
 }

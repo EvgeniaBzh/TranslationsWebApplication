@@ -8,7 +8,7 @@ public partial class Topic
 {
     public int TopicId { get; set; }
     [Display(Name = "Topic")]
-    public string? TopicName { get; set; }
+    public string TopicName { get; set; }
 
     public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
 }

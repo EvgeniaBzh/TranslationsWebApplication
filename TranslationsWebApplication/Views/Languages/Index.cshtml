@@ -4,33 +4,119 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<style>
+    @@import url('https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&display=swap');
+
+    .mochiy-pop-one-regular {
+        font-family: "Mochiy Pop One", sans-serif;
+        font-weight: 400;
+        font-style: normal;
+    }
+
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        .table th, .table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        .table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .table tr:nth-child(odd) {
+            background-color: #ffffff;
+        }
+
+        .table th {
+            padding-top: 12px;
+            padding-bottom: 12px;
+            text-align: left;
+            background-color: #4A0D5B;
+            color: white;
+        }
+
+    .table {
+        width: 80%;
+        margin-right: 20%;
+        border-collapse: collapse;
+    }
+
+    .action-link {
+        color: black;
+        text-decoration: none;
+    }
+
+        .action-link:hover {
+            color: #A12F86;
+        }
+
+
+    .buttons-container {
+        padding-top: 174px;
+    }
+
+    .btn-primary, .btn-secondary {
+        background-color: white;
+        color: #4A0D5B;
+        border: 1px solid transparent;
+    }
+
+        .btn-primary:hover, .btn-secondary:hover {
+            background-color: #888787;
+            color: white;
+        }
+
+        .btn-primary:hover, .btn-secondary:hover {
+            color: white;
+        }
+
+    html {
+        position: relative;
+        min-height: 100%;
+    }
+
+    body {
+        margin-bottom: 60px;
+        background: url('ffonn2.jpg') no-repeat center center;
+        background-size: cover;
+        background-position: center;
+        min-height: 100vh;
+    }
+
+</style>
+
+<h1 class="mochiy-pop-one-regular" style="color: #4A0D5B;">Languages List</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" class="btn btn-primary" enctype="multipart/form-data">Add language</a>
 </p>
 <table class="table">
     <thead>
         <tr>
-            <th>
+            <th style="width: 60%;">
                 @Html.DisplayNameFor(model => model.LanguageName)
             </th>
-            <th></th>
+            <th style="width: 40%;"></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.LanguageName)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.LanguageId">Edit</a> |
-                    <a asp-action="DetailsOriginal" asp-route-id="@item.LanguageId">Details Original</a> |
-                    <a asp-action="DetailsTranslation" asp-route-id="@item.LanguageId">Details Translation</a>
-                <a asp-action="Delete" asp-route-id="@item.LanguageId">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td style="width: 60%;">
+                    @Html.DisplayFor(modelItem => item.LanguageName)
+                </td>
+                <td style="width: 40%;">
+                    <a asp-action="Edit" asp-route-id="@item.LanguageId" class="action-link">Edit</a>
+                    <a asp-action="DetailsOriginal" asp-route-id="@item.LanguageId" class="action-link">View Original</a>
+                    <a asp-action="DetailsTranslation" asp-route-id="@item.LanguageId" class="action-link">View Translation</a>
+                    <a asp-action="Delete" asp-route-id="@item.LanguageId" class="action-link">Delete</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

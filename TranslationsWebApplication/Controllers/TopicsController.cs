@@ -67,6 +67,14 @@ namespace TranslationsWebApplication.Controllers
         {
             if (ModelState.IsValid)
             {
+                // Перевірка на унікальність назви теми
+                var topicExists = await _context.Topics.AnyAsync(t => t.TopicName == topic.TopicName);
+                if (topicExists)
+                {
+                    ModelState.AddModelError("TopicName", "A topic with that name already exists.");
+                    return View(topic);
+                }
+
                 _context.Add(topic);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -90,9 +98,6 @@ namespace TranslationsWebApplication.Controllers
             return View(topic);
         }
 
-        // POST: Topics/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("TopicId,TopicName")] Topic topic)
@@ -104,6 +109,14 @@ namespace TranslationsWebApplication.Controllers
 
             if (ModelState.IsValid)
             {
+                var topicExists = await _context.Topics
+                                                 .AnyAsync(t => t.TopicName == topic.TopicName && t.TopicId != topic.TopicId);
+                if (topicExists)
+                {
+                    ModelState.AddModelError("TopicName", "A topic with that name already exists.");
+                    return View(topic);
+                }
+
                 try
                 {
                     _context.Update(topic);
@@ -124,7 +137,6 @@ namespace TranslationsWebApplication.Controllers
             }
             return View(topic);
         }
-
         // GET: Topics/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {

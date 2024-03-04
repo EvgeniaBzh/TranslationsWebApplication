@@ -113,6 +113,14 @@ namespace TranslationsWebApplication.Controllers
         {
             if (ModelState.IsValid)
             {
+                // Перевірка на унікальність назви теми
+                var languageExists = await _context.Languages.AnyAsync(t => t.LanguageName == language.LanguageName);
+                if (languageExists)
+                {
+                    ModelState.AddModelError("LanguageName", "A language with that name already exists.");
+                    return View(language);
+                }
+
                 _context.Add(language);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -150,6 +158,14 @@ namespace TranslationsWebApplication.Controllers
 
             if (ModelState.IsValid)
             {
+                var languageExists = await _context.Languages
+                                                 .AnyAsync(t => t.LanguageName == language.LanguageName && t.LanguageId != language.LanguageId);
+                if (languageExists)
+                {
+                    ModelState.AddModelError("LanguageName", "A language with that name already exists.");
+                    return View(language);
+                }
+
                 try
                 {
                     _context.Update(language);
