@@ -91,7 +91,6 @@
 
 <h1 class="mochiy-pop-one-regular" style="color: #4A0D5B;">Types List</h1>
 
-
 <p>
     <a asp-action="Create" class="btn btn-primary" enctype="multipart/form-data">Add type</a>
 </p>
@@ -120,3 +119,39 @@
         }
     </tbody>
 </table>
+
+<!-- Переміщення діаграми тут -->
+<div id="orderTypeDistributionChart"></div>
+
+@section Scripts
+    {
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        google.charts.load('current', { 'packages': ['corechart'] });
+        google.charts.setOnLoadCallback(drawOrderTypeDistributionChart);
+
+        function drawOrderTypeDistributionChart() {
+            fetch('/api/diagram2/orderTypeDistribution')
+                .then(response => response.json())
+                .then(data => {
+                    const dataTable = new google.visualization.DataTable();
+                    dataTable.addColumn('string', 'Тип');
+                    dataTable.addColumn('number', 'Кількість');
+                    data.forEach(item => {
+                        dataTable.addRow([item.typeName, item.count]);
+                    });
+
+                    const options = {
+                        title: 'Розподіл замовлень за типами',
+                        width: 600,
+                        height: 400,
+                        backgroundColor: 'transparent', 
+                        colors: ['#FF6384', '#36A2EB', '#EBCE36', 'EB3636']
+                    };
+
+                    const chart = new google.visualization.PieChart(document.getElementById('orderTypeDistributionChart'));
+                    chart.draw(dataTable, options);
+                });
+        }
+    </script>
+}

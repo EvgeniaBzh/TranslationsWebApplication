@@ -94,6 +94,8 @@
 <p>
     <a asp-action="Create" class="btn btn-primary" enctype="multipart/form-data">Add language</a>
 </p>
+
+
 <table class="table">
     <thead>
         <tr>
@@ -120,3 +122,61 @@
         }
     </tbody>
 </table>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<div class="chart-container" style="position: relative; height:40vh; width:80vw">
+    <canvas id="languageTranslationStatsChart"></canvas>
+</div>
+
+<script>
+    fetch('/api/Diagram1/languageTranslationStats')
+        .then(response => response.json())
+        .then(data => {
+            var ctx = document.getElementById('languageTranslationStatsChart').getContext('2d');
+            var chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.map(item => item.language),
+                    datasets: [{
+                        label: 'Translations To',
+                        backgroundColor: 'rgb(255, 99, 132)',
+                        borderColor: 'rgb(255, 99, 132)',
+                        data: data.map(item => item.translationsTo)
+                    }, {
+                        label: 'Translations From',
+                        backgroundColor: 'rgb(54, 162, 235)',
+                        borderColor: 'rgb(54, 162, 235)',
+                        data: data.map(item => item.translationsFrom)
+                    }]
+                },
+                options: {
+                    scales: {
+                        x: {
+                            ticks: {
+                                color: 'black'
+                            },
+                            grid: {
+                                color: 'black',
+                                drawBorder: true
+                            }
+                        },
+                        y: {
+                            ticks: {
+                                color: 'black'
+                            },
+                            grid: {
+                                color: 'black',
+                                drawBorder: true
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: 'black'
+                            }
+                        }
+                    }
+                }
+            });
+        });
+</script>

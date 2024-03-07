@@ -67,7 +67,6 @@ namespace TranslationsWebApplication.Controllers
         {
             if (ModelState.IsValid)
             {
-                // Перевірка на унікальність назви теми
                 var topicExists = await _context.Topics.AnyAsync(t => t.TopicName == topic.TopicName);
                 if (topicExists)
                 {

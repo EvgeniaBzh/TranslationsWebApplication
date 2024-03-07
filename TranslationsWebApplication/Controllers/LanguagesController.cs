@@ -70,7 +70,7 @@ namespace TranslationsWebApplication.Controllers
                 return NotFound();
             }
 
-            return View("DetailsOriginal", orders); // Використовуйте вигляд, що показує замовлення
+            return View("DetailsOriginal", orders);
         }
 
 
@@ -94,7 +94,7 @@ namespace TranslationsWebApplication.Controllers
                 return NotFound();
             }
 
-            return View("DetailsTranslation", orders); // Використовуйте той же вигляд, що і для DetailsOriginal
+            return View("DetailsTranslation", orders);
         }
 
 

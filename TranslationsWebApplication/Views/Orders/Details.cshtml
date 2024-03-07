@@ -142,13 +142,34 @@
     <a asp-action="DownloadFile" asp-route-id="@Model.OrderId" class="btn btn-create">Download file</a>
     @if (Model.OrderStatus == OrderStatus.Offer)
     {
-        <a asp-action="Respond" asp-route-id="@Model?.OrderId" class="btn btn-create">Відгукнутися</a>
+        <button class="btn btn-create" onclick="confirmTake(@Model.OrderId)">Take</button>
     }
+
 </div>
-@if (Model.OrderStatus != OrderStatus.Done)
+
+@if (Model.OrderStatus == OrderStatus.InProgress)
 {
     <div style="margin-top: 20px;">
-        <button class="btn btn-create" @(Model.OrderStatus != OrderStatus.InProgress ? "disabled" : "") onclick="location.href='@Url.Action("Submit", "Orders", new { id = Model.OrderId })'">Submit</button>
+        <button class="btn btn-create" onclick="location.href='@Url.Action("Submit", "Orders", new { id = Model.OrderId })'">Submit</button>
+        <button class="btn btn-create" onclick="confirmCancel(@Model.OrderId)">Cancel</button>
     </div>
 }
 
+
+<script>
+    function confirmTake(orderId) {
+        var confirmed = confirm("Are you sure you want to start working on this order?");
+        if (confirmed) {
+            window.location.href = '/Orders/Respond/' + orderId;
+        }
+    }
+</script>
+
+<script>
+    function confirmCancel(orderId) {
+        var confirmed = confirm("Are you sure you want to cancel this order?");
+        if (confirmed) {
+            window.location.href = '/Orders/Cancel/' + orderId;
+        }
+    }
+</script>

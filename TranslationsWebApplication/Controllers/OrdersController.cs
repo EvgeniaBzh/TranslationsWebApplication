@@ -114,7 +114,7 @@ namespace TranslationsWebApplication.Controllers
 
                         // Store the file in a byte array
                         order.FileData = memoryStream.ToArray();
-                        order.FileName = fileUpload.FileName; // You can set the file name here
+                        order.FileName = fileUpload.FileName;
                     }
                 }
 
@@ -140,7 +140,6 @@ namespace TranslationsWebApplication.Controllers
                 return NotFound();
             }
 
-            // Перевіряємо статус замовлення
             if (order.OrderStatus == OrderStatus.InProgress || order.OrderStatus == OrderStatus.Done)
             {
                 TempData["EditMessage"] = "It is not possible to edit an order due to its status.";
@@ -296,6 +295,33 @@ namespace TranslationsWebApplication.Controllers
             return RedirectToAction(nameof(Details), new { id = id });
         }
 
+        // GET: Orders/Cancel/5
+        public async Task<IActionResult> Cancel(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var order = await _context.Orders.FindAsync(id);
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            // Перевірте, чи статус замовлення дозволяє його скасування
+            if (order.OrderStatus == OrderStatus.InProgress)
+            {
+                order.OrderStatus = OrderStatus.Offer;
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Details), new { id = id });
+            }
+            else
+            {
+                // Можете додати обробку для випадку, якщо скасування не можливе
+                return RedirectToAction(nameof(Details), new { id = id });
+            }
+        }
 
         // GET: Orders/Submit/5
         public async Task<IActionResult> Submit(int? id)
@@ -326,10 +352,8 @@ namespace TranslationsWebApplication.Controllers
                 return NotFound();
             }
 
-            // Check if a file is uploaded
             if (submittedFile == null || submittedFile.Length == 0)
             {
-                // If no file is uploaded, return to the view with an error message
                 ModelState.AddModelError("submittedFile", "Submitting a file is required.");
                 return View(order);
             }
