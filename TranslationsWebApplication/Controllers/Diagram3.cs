@@ -6,23 +6,23 @@ namespace TranslationsWebApplication.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class Diagram2 : ControllerBase
+    public class Diagram3 : ControllerBase
     {
         private readonly DbtranslationAgencyContext dbContext;
 
-        public Diagram2(DbtranslationAgencyContext context)
+        public Diagram3(DbtranslationAgencyContext context)
         {
             dbContext = context;
         }
 
-        [HttpGet("orderTypeDistribution")]
-        public IActionResult GetOrderTypeDistribution()
+        [HttpGet("topicDistribution")]
+        public IActionResult GetTopicDistribution()
         {
             var result = dbContext.Orders
-                .GroupBy(o => o.Type.TypeName)
+                .GroupBy(o => o.Topic.TopicName)
                 .Select(group => new
                 {
-                    TypeName = group.Key,
+                    TopicName = group.Key,
                     Count = group.Count()
                 })
                 .ToList();

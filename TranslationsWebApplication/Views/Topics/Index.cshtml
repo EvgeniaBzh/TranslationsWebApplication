@@ -120,3 +120,39 @@
     </tbody>
 </table>
 
+<!-- Add this div where you want the donut chart to appear -->
+<div id="topicDistributionChart"></div>
+
+@section Scripts
+    {
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        google.charts.load('current', { 'packages': ['corechart'] });
+        google.charts.setOnLoadCallback(drawTopicDistributionChart);
+
+        function drawTopicDistributionChart() {
+            fetch('/api/diagram3/topicDistribution')
+                .then(response => response.json())
+                .then(data => {
+                    const dataTable = new google.visualization.DataTable();
+                    dataTable.addColumn('string', 'Тема');
+                    dataTable.addColumn('number', 'Кількість');
+                    data.forEach(item => {
+                        dataTable.addRow([item.topicName, item.count]);
+                    });
+
+                    const options = {
+                        title: 'Distribution of orders by topics',
+                        pieHole: 0.4, // This creates the donut shape
+                        width: 600,
+                        height: 400,
+                        backgroundColor: 'transparent',
+                        colors: ['#FF6384', '#36A2EB', '#EBCE36', '#EB3636']
+                    };
+
+                    const chart = new google.visualization.PieChart(document.getElementById('topicDistributionChart'));
+                    chart.draw(dataTable, options);
+                });
+        }
+    </script>
+}
