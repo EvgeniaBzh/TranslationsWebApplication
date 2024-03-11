@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -97,13 +99,26 @@ namespace TranslationsWebApplication.Controllers
             return View();
         }
 
-        // POST: Orders/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("OrderId,OrderName,OriginalLanguageId,TranslationLanguageId,TypeId,TopicId,OrderScope,OrderPrice,FileName,OrderSubmissionDate")] Order order, IFormFile fileUpload)
         {
+            if (order.OrderPrice < 1)
+            {
+                ModelState.AddModelError("OrderPrice", "The order price must be at least one hryvnia.");
+            }
+
+            if (order.OrderSubmissionDate < DateTime.Now)
+            {
+                ModelState.AddModelError("OrderSubmissionDate", "Submission date cannot be in the past.");
+            }
+
+            var allowedFileTypes = new List<string> { "text/plain", "application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/vnd.ms-excel", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" };
+            if (fileUpload != null && !allowedFileTypes.Contains(fileUpload.ContentType))
+            {
+                ModelState.AddModelError("fileUpload", "Unsupported file type. Please upload a text document.");
+            }
+
             if (ModelState.IsValid)
             {
                 if (fileUpload != null && fileUpload.Length > 0)
@@ -112,11 +127,25 @@ namespace TranslationsWebApplication.Controllers
                     {
                         await fileUpload.CopyToAsync(memoryStream);
 
-                        // Store the file in a byte array
+                        // Збережіть дані файлу
                         order.FileData = memoryStream.ToArray();
                         order.FileName = fileUpload.FileName;
+
+                        // Перетворюємо масив байтів назад у рядок
+                        var content = Encoding.UTF8.GetString(order.FileData);
+
+                        // Використовуйте регулярний вираз для видалення всього, окрім бажаних символів
+                        // Цей приклад включає алфавітні символи (латиниця і кирилиця) та цифри
+                        var onlySymbolsContent = Regex.Replace(content, "[^a-zA-Z0-9а-яА-Я]", "");
+
+                        // Обчислюємо кількість символів
+                        var characterCount = onlySymbolsContent.Length;
+
+                        // Встановлюємо це значення як OrderScope
+                        order.OrderScope = characterCount;
                     }
                 }
+
 
                 order.OrderStatus = OrderStatus.Offer;
 
@@ -124,6 +153,12 @@ namespace TranslationsWebApplication.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
+            ViewData["TypeId"] = new SelectList(_context.Types, "TypeId", "TypeName", order.TypeId);
+            ViewData["TopicId"] = new SelectList(_context.Topics, "TopicId", "TopicName", order.TopicId);
+            ViewData["OriginalLanguageId"] = new SelectList(_context.Languages, "LanguageId", "LanguageName", order.OriginalLanguageId);
+            ViewData["TranslationLanguageId"] = new SelectList(_context.Languages, "LanguageId", "LanguageName", order.TranslationLanguageId);
+
             return View(order);
         }
 
@@ -208,7 +243,6 @@ namespace TranslationsWebApplication.Controllers
 
             return View(orderInput);
         }
-
 
 
         // GET: Orders/Delete/5

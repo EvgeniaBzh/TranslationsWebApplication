@@ -26,7 +26,7 @@ public partial class Order
     public int? TopicId { get; set; }
     [Display(Name = "Scope (in symbols)")]
     public int OrderScope { get; set; }
-    [Display(Name = "Price (в Hryvnias)")]
+    [Display(Name = "Price (in Hryvnias)")]
     public double OrderPrice { get; set; }
 
     public string? FileName { get; set; }

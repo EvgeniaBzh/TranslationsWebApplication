@@ -107,7 +107,6 @@
             <th>Price</th>
             <th>Submission date</th>
             <th>Status</th>
-            <th>File</th>
             <th>Submitted file</th>
             <th>Actions</th>
         </tr>
@@ -147,11 +146,16 @@
                     @Html.DisplayFor(modelItem => item.OrderStatus)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.FileName)
+                    @if (item.OrderStatus == OrderStatus.Done)
+                    {
+                        <span>&#10004;</span>
+                    }
+                    else
+                    {
+                        @Html.DisplayFor(modelItem => item.SubmittedFileName)
+                    }
                 </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.SubmittedFileName)
-                </td>
+
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.OrderId" class="action-link">Edit</a>
                     <a asp-action="Details" asp-route-id="@item.OrderId" class="action-link">View</a>
