@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TranslationsWebApplication.Models;
+using DocumentFormat.OpenXml.Packaging;
 
 namespace TranslationsWebApplication.Controllers
 {
@@ -123,29 +124,32 @@ namespace TranslationsWebApplication.Controllers
             {
                 if (fileUpload != null && fileUpload.Length > 0)
                 {
+                    string content;
+
                     using (var memoryStream = new MemoryStream())
                     {
                         await fileUpload.CopyToAsync(memoryStream);
 
-                        // Збережіть дані файлу
-                        order.FileData = memoryStream.ToArray();
-                        order.FileName = fileUpload.FileName;
+                        if (fileUpload.ContentType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+                        {
+                            content = ReadDocxFile(memoryStream);
+                        }
+                        else
+                        {
+                            memoryStream.Position = 0;
+                            using (var reader = new StreamReader(memoryStream))
+                            {
+                                content = await reader.ReadToEndAsync();
+                            }
+                        }
 
-                        // Перетворюємо масив байтів назад у рядок
-                        var content = Encoding.UTF8.GetString(order.FileData);
-
-                        // Використовуйте регулярний вираз для видалення всього, окрім бажаних символів
-                        // Цей приклад включає алфавітні символи (латиниця і кирилиця) та цифри
                         var onlySymbolsContent = Regex.Replace(content, "[^a-zA-Z0-9а-яА-Я]", "");
 
-                        // Обчислюємо кількість символів
                         var characterCount = onlySymbolsContent.Length;
 
-                        // Встановлюємо це значення як OrderScope
                         order.OrderScope = characterCount;
                     }
                 }
-
 
                 order.OrderStatus = OrderStatus.Offer;
 
@@ -160,6 +164,19 @@ namespace TranslationsWebApplication.Controllers
             ViewData["TranslationLanguageId"] = new SelectList(_context.Languages, "LanguageId", "LanguageName", order.TranslationLanguageId);
 
             return View(order);
+        }
+
+        private string ReadDocxFile(Stream fileStream)
+        {
+            StringBuilder sb = new StringBuilder();
+            using (WordprocessingDocument doc = WordprocessingDocument.Open(fileStream, false))
+            {
+                foreach (var text in doc.MainDocumentPart.Document.Descendants<DocumentFormat.OpenXml.Wordprocessing.Text>())
+                {
+                    sb.Append(text.Text);
+                }
+            }
+            return sb.ToString();
         }
 
         public async Task<IActionResult> Edit(int? id)
