@@ -6,11 +6,11 @@ using System.Globalization;
 
 namespace TranslationsWebApplication.Infrastructure.Services
 {
-    public class TypeImportService : IImportService<Topic>
+    public class TopicImportService : IImportService<Topic>
     {
         private readonly DbtranslationAgencyContext context;
-        // реалізація AddMovieAsync та інших методів
-        public TypeImportService(DbtranslationAgencyContext context)
+
+        public TopicImportService(DbtranslationAgencyContext context)
         {
             this.context = context;
         }

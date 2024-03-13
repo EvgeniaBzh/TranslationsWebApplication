@@ -94,6 +94,7 @@
 <p>
     <a asp-action="Create" class="btn btn-primary" enctype="multipart/form-data">Add topic</a>
 </p>
+
 <table class="table">
     <thead>
         <tr>
@@ -119,6 +120,28 @@
         }
     </tbody>
 </table>
+<div class="row">
+    <div class="col-12">
+        <!-- Existing import form -->
+        @using (Html.BeginForm("Import", "Topics", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            <div class="mb-3">
+                <label for="topicsFile" class="form-label">Оберіть файл для завантаження</label>
+                <input type="file" name="topicsFile" id="topicsFile" />
+            </div>
+            <div>
+                <input class="btn btn-primary mb-3" type="submit" value="Завантажити" id="uploadBtn" disabled />
+            </div>
+        }
+
+        @using (Html.BeginForm("Export", "Topics", FormMethod.Get))
+        {
+            <div>
+                <input class="btn btn-primary mb-3" type="submit" value="Експортувати" />
+            </div>
+        }
+    </div>
+</div>
 
 <!-- Add this div where you want the donut chart to appear -->
 <div id="topicDistributionChart"></div>
@@ -156,3 +179,17 @@
         }
     </script>
 }
+<script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', function () {
+        var fileInput = document.getElementById('topicsFile');
+        var uploadBtn = document.getElementById('uploadBtn');
+
+        fileInput.addEventListener('change', function () {
+            if (fileInput.value) { // Якщо файл обрано
+                uploadBtn.disabled = false; // Активуємо кнопку
+            } else {
+                uploadBtn.disabled = true; // Деактивуємо кнопку, якщо файл не обрано
+            }
+        });
+    });
+</script>

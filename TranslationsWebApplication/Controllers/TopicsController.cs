@@ -5,7 +5,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using TranslationsWebApplication.Infrastructure.Services;
 using TranslationsWebApplication.Models;
+using TranslationsWebApplication.Infrastructure.Services;
 
 namespace TranslationsWebApplication.Controllers
 {
@@ -177,5 +179,49 @@ namespace TranslationsWebApplication.Controllers
         {
             return (_context.Topics?.Any(e => e.TopicId == id)).GetValueOrDefault();
         }
+
+        [HttpGet]
+        public IActionResult Import()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Import(IFormFile topicsFile, CancellationToken cancellationToken)
+        {
+            if (topicsFile == null || topicsFile.Length == 0)
+            {
+                // Here you can handle the error, for example, by displaying a message on the page
+                return View();
+            }
+
+            // Create an instance of TopicDataPortServiceFactory
+            var topicDataPortServiceFactory = new TopicDataPortServiceFactory(_context);
+            var importService = topicDataPortServiceFactory.GetImportService(topicsFile.ContentType);
+
+            using var stream = topicsFile.OpenReadStream();
+            await importService.ImportFromStreamAsync(stream, cancellationToken);
+
+            return RedirectToAction(nameof(Index)); // Make sure the Index method exists
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Export([FromQuery] string contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", CancellationToken cancellationToken = default)
+        {
+            var topicDataPortServiceFactory = new TopicDataPortServiceFactory(_context);
+            var exportService = topicDataPortServiceFactory.GetExportService(contentType);
+
+            var memoryStream = new MemoryStream();
+            await exportService.WriteToAsync(memoryStream, cancellationToken);
+            await memoryStream.FlushAsync(cancellationToken);
+            memoryStream.Position = 0;
+
+            return new FileStreamResult(memoryStream, contentType)
+            {
+                FileDownloadName = $"topics_{DateTime.UtcNow.ToString("yyyy-MM-dd")}.xlsx"
+            };
+        }
+
+
     }
 }

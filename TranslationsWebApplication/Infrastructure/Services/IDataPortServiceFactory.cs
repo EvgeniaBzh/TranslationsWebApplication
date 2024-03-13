@@ -7,6 +7,6 @@ namespace TranslationsWebApplication.Infrastructure.Services
   where TTopic : Topic
     {
         IImportService<TTopic> GetImportService(string contentType);
-        //IExportService<TEntity> GetExportService(string contentType);
+        IExportService<TTopic> GetExportService(string contentType);
     }
 }
