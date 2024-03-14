@@ -114,7 +114,6 @@ namespace TranslationsWebApplication.Controllers
         {
             if (ModelState.IsValid)
             {
-                // Перевірка на унікальність назви теми
                 var languageExists = await _context.Languages.AnyAsync(t => t.LanguageName == language.LanguageName);
                 if (languageExists)
                 {
@@ -206,7 +205,6 @@ namespace TranslationsWebApplication.Controllers
             return View(language);
         }
 
-        // POST: Languages/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -215,15 +213,24 @@ namespace TranslationsWebApplication.Controllers
             {
                 return Problem("Entity set 'DbtranslationAgencyContext.Languages'  is null.");
             }
+
             var language = await _context.Languages.FindAsync(id);
             if (language != null)
             {
+                var ordersToDelete = await _context.Orders
+                    .Where(o => o.OriginalLanguageId == id || o.TranslationLanguageId == id)
+                    .ToListAsync();
+
+                _context.Orders.RemoveRange(ordersToDelete);
+
                 _context.Languages.Remove(language);
+
+                await _context.SaveChangesAsync();
             }
-            
-            await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
+
 
         private bool LanguageExists(int id)
         {
@@ -241,18 +248,16 @@ namespace TranslationsWebApplication.Controllers
         {
             if (langsFile == null || langsFile.Length == 0)
             {
-                // Here you can handle the error, for example, by displaying a message on the page
                 return View();
             }
 
-            // Create an instance of TopicDataPortServiceFactory
             var langDataPortServiceFactory = new LangDataPortServiceFactory(_context);
             var importService = langDataPortServiceFactory.GetImportServiceLang(langsFile.ContentType);
 
             using var stream = langsFile.OpenReadStream();
             await importService.ImportFromStreamAsync(stream, cancellationToken);
 
-            return RedirectToAction(nameof(Index)); // Make sure the Index method exists
+            return RedirectToAction(nameof(Index));
         }
 
         [HttpGet]

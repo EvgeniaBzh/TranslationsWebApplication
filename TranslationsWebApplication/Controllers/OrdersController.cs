@@ -361,7 +361,6 @@ namespace TranslationsWebApplication.Controllers
                 return NotFound();
             }
 
-            // Перевірте, чи статус замовлення дозволяє його скасування
             if (order.OrderStatus == OrderStatus.InProgress)
             {
                 order.OrderStatus = OrderStatus.Offer;
@@ -370,7 +369,6 @@ namespace TranslationsWebApplication.Controllers
             }
             else
             {
-                // Можете додати обробку для випадку, якщо скасування не можливе
                 return RedirectToAction(nameof(Details), new { id = id });
             }
         }

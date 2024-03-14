@@ -164,15 +164,25 @@ namespace TranslationsWebApplication.Controllers
         {
             if (_context.Types == null)
             {
-                return Problem("Entity set 'DbtranslationAgencyContext.Types'  is null.");
+                return Problem("Entity set 'DbtranslationAgencyContext.Types' is null.");
             }
-            var type = await _context.Types.FindAsync(id);
+
+            var type = await _context.Types
+                .Include(t => t.Orders)
+                .FirstOrDefaultAsync(m => m.TypeId == id);
+
             if (type != null)
             {
+                if (type.Orders != null)
+                {
+                    _context.Orders.RemoveRange(type.Orders);
+                }
+
                 _context.Types.Remove(type);
+
+                await _context.SaveChangesAsync();
             }
-            
-            await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
 
@@ -192,18 +202,16 @@ namespace TranslationsWebApplication.Controllers
         {
             if (typesFile == null || typesFile.Length == 0)
             {
-                // Here you can handle the error, for example, by displaying a message on the page
                 return View();
             }
 
-            // Create an instance of TopicDataPortServiceFactory
             var typeDataPortServiceFactory = new TypeDataPortServiceFactory(_context);
             var importService = typeDataPortServiceFactory.GetImportServiceType(typesFile.ContentType);
 
             using var stream = typesFile.OpenReadStream();
             await importService.ImportFromStreamAsync(stream, cancellationToken);
 
-            return RedirectToAction(nameof(Index)); // Make sure the Index method exists
+            return RedirectToAction(nameof(Index));
         }
 
         [HttpGet]

@@ -13,29 +13,29 @@ namespace TranslationsWebApplication.Infrastructure.Services
 {
     public class OrderExportService : IExportServiceOrder<Order>
     {
-        private const string RootWorksheetName = "Orders"; // Adjusted the worksheet name
+        private const string RootWorksheetName = "Orders";
         private static readonly IReadOnlyList<string> HeaderNames = new string[]
         {
-            "ID", // Adjusted for Order
-            "Name", // Adjusted for Order
-            "Original Language", // Adjusted for Order
-            "Translation Language", // Adjusted for Order
-            "Type ID", // Adjusted for Order
-            "Topic ID", // Adjusted for Order
-            "Scope", // Adjusted for Order
-            "Price", // Adjusted for Order
-            "Submission Date", // Adjusted for Order
-            "Status" // Adjusted for Order
+            "ID",
+            "Name",
+            "Original Language",
+            "Translation Language",
+            "Type ID",
+            "Topic ID",
+            "Scope",
+            "Price",
+            "Submission Date",
+            "Status"
         };
 
         private readonly DbtranslationAgencyContext context;
 
-        public OrderExportService(DbtranslationAgencyContext context) // Constructor remains the same
+        public OrderExportService(DbtranslationAgencyContext context)
         {
             this.context = context;
         }
 
-        private static void WriteHeader(IXLWorksheet worksheet) // Method remains the same
+        private static void WriteHeader(IXLWorksheet worksheet)
         {
             for (int columnIndex = 0; columnIndex < HeaderNames.Count; columnIndex++)
             {
@@ -59,7 +59,7 @@ namespace TranslationsWebApplication.Infrastructure.Services
         }
 
 
-        private static void WriteOrders(IXLWorksheet worksheet, ICollection<Order> orders) // Adjusted for Order
+        private static void WriteOrders(IXLWorksheet worksheet, ICollection<Order> orders)
         {
             WriteHeader(worksheet);
             int rowIndex = 2;
@@ -70,7 +70,7 @@ namespace TranslationsWebApplication.Infrastructure.Services
             }
         }
 
-        public async Task WriteToAsync(Stream stream, CancellationToken cancellationToken) // Method remains largely the same
+        public async Task WriteToAsync(Stream stream, CancellationToken cancellationToken)
         {
             if (!stream.CanWrite)
             {

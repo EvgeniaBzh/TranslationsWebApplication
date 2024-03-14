@@ -26,7 +26,7 @@ namespace TranslationsWebApplication.Infrastructure.Services
             {
                 return;
             }
-            foreach (var rows in worksheet.RowsUsed().Skip(1)) //пропустити перший рядок, бо це заголовок
+            foreach (var rows in worksheet.RowsUsed().Skip(1))
             {
                 await AddTypeAsync(rows, cancellationToken);
             }

@@ -143,7 +143,6 @@
     </div>
 </div>
 
-<!-- Add this div where you want the donut chart to appear -->
 <div id="topicDistributionChart"></div>
 
 @section Scripts
@@ -166,7 +165,7 @@
 
                     const options = {
                         title: 'Distribution of orders by topics',
-                        pieHole: 0.4, // This creates the donut shape
+                        pieHole: 0.4,
                         width: 600,
                         height: 400,
                         backgroundColor: 'transparent',
@@ -185,10 +184,10 @@
         var uploadBtn = document.getElementById('uploadBtn');
 
         fileInput.addEventListener('change', function () {
-            if (fileInput.value) { // Якщо файл обрано
-                uploadBtn.disabled = false; // Активуємо кнопку
+            if (fileInput.value) {
+                uploadBtn.disabled = false;
             } else {
-                uploadBtn.disabled = true; // Деактивуємо кнопку, якщо файл не обрано
+                uploadBtn.disabled = true;
             }
         });
     });

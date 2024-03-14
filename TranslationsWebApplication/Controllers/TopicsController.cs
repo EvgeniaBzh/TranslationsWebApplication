@@ -156,24 +156,32 @@ namespace TranslationsWebApplication.Controllers
             return View(topic);
         }
 
-        // POST: Topics/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             if (_context.Topics == null)
             {
-                return Problem("Entity set 'DbtranslationAgencyContext.Topics'  is null.");
-            }
-            var topic = await _context.Topics.FindAsync(id);
-            if (topic != null)
-            {
-                _context.Topics.Remove(topic);
+                return Problem("Entity set 'DbtranslationAgencyContext.Topics' is null.");
             }
 
-            await _context.SaveChangesAsync();
+            var topic = await _context.Topics
+                                       .Include(t => t.Orders)
+                                       .FirstOrDefaultAsync(m => m.TopicId == id);
+            if (topic != null)
+            {
+                if (topic.Orders != null)
+                {
+                    _context.Orders.RemoveRange(topic.Orders);
+                }
+
+                _context.Topics.Remove(topic);
+                await _context.SaveChangesAsync();
+            }
+
             return RedirectToAction(nameof(Index));
         }
+
 
         private bool TopicExists(int id)
         {
@@ -191,18 +199,16 @@ namespace TranslationsWebApplication.Controllers
         {
             if (topicsFile == null || topicsFile.Length == 0)
             {
-                // Here you can handle the error, for example, by displaying a message on the page
                 return View();
             }
 
-            // Create an instance of TopicDataPortServiceFactory
             var topicDataPortServiceFactory = new TopicDataPortServiceFactory(_context);
             var importService = topicDataPortServiceFactory.GetImportService(topicsFile.ContentType);
 
             using var stream = topicsFile.OpenReadStream();
             await importService.ImportFromStreamAsync(stream, cancellationToken);
 
-            return RedirectToAction(nameof(Index)); // Make sure the Index method exists
+            return RedirectToAction(nameof(Index));
         }
 
         [HttpGet]
