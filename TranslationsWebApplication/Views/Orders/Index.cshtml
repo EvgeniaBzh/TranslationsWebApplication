@@ -167,3 +167,29 @@
         }
     </tbody>
 </table>
+
+<div class="row">
+    <div class="col-12">
+        @using (Html.BeginForm("Export", "Orders", FormMethod.Get))
+        {
+            <div>
+                <input class="btn btn-primary mb-3" type="submit" value="Експортувати" />
+            </div>
+        }
+    </div>
+</div>
+
+<script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', function () {
+        var fileInput = document.getElementById('ordersFile');
+        var uploadBtn = document.getElementById('uploadBtn');
+
+        fileInput.addEventListener('change', function () {
+            if (fileInput.value) {
+                uploadBtn.disabled = false;
+            } else {
+                uploadBtn.disabled = true;
+            }
+        });
+    });
+</script>

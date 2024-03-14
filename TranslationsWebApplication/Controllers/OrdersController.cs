@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TranslationsWebApplication.Models;
 using DocumentFormat.OpenXml.Packaging;
+using TranslationsWebApplication.Infrastructure.Services;
 
 namespace TranslationsWebApplication.Controllers
 {
@@ -424,5 +425,27 @@ namespace TranslationsWebApplication.Controllers
             return RedirectToAction(nameof(Details), new { id = id });
         }
 
+        [HttpGet]
+        public IActionResult Import()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Export([FromQuery] string contentOrder = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", CancellationToken cancellationToken = default)
+        {
+            var orderDataPortServiceFactory = new OrderDataPortServiceFactory(_context);
+            var exportService = orderDataPortServiceFactory.GetExportServiceOrder(contentOrder);
+
+            var memoryStream = new MemoryStream();
+            await exportService.WriteToAsync(memoryStream, cancellationToken);
+            await memoryStream.FlushAsync(cancellationToken);
+            memoryStream.Position = 0;
+
+            return new FileStreamResult(memoryStream, contentOrder)
+            {
+                FileDownloadName = $"orders_{DateTime.UtcNow.ToString("yyyy-MM-dd")}.xlsx"
+            };
+        }
     }
 }

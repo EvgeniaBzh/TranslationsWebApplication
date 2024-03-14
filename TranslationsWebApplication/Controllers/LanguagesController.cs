@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using TranslationsWebApplication.Infrastructure.Services;
 using TranslationsWebApplication.Models;
 
 namespace TranslationsWebApplication.Controllers
@@ -227,6 +228,48 @@ namespace TranslationsWebApplication.Controllers
         private bool LanguageExists(int id)
         {
           return (_context.Languages?.Any(e => e.LanguageId == id)).GetValueOrDefault();
+        }
+
+        [HttpGet]
+        public IActionResult Import()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Import(IFormFile langsFile, CancellationToken cancellationToken)
+        {
+            if (langsFile == null || langsFile.Length == 0)
+            {
+                // Here you can handle the error, for example, by displaying a message on the page
+                return View();
+            }
+
+            // Create an instance of TopicDataPortServiceFactory
+            var langDataPortServiceFactory = new LangDataPortServiceFactory(_context);
+            var importService = langDataPortServiceFactory.GetImportServiceLang(langsFile.ContentType);
+
+            using var stream = langsFile.OpenReadStream();
+            await importService.ImportFromStreamAsync(stream, cancellationToken);
+
+            return RedirectToAction(nameof(Index)); // Make sure the Index method exists
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Export([FromQuery] string contentLang = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", CancellationToken cancellationToken = default)
+        {
+            var langDataPortServiceFactory = new LangDataPortServiceFactory(_context);
+            var exportService = langDataPortServiceFactory.GetExportServiceLang(contentLang);
+
+            var memoryStream = new MemoryStream();
+            await exportService.WriteToAsync(memoryStream, cancellationToken);
+            await memoryStream.FlushAsync(cancellationToken);
+            memoryStream.Position = 0;
+
+            return new FileStreamResult(memoryStream, contentLang)
+            {
+                FileDownloadName = $"languages_{DateTime.UtcNow.ToString("yyyy-MM-dd")}.xlsx"
+            };
         }
     }
 }

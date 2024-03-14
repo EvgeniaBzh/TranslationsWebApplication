@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using TranslationsWebApplication.Infrastructure.Services;
 using TranslationsWebApplication.Models;
 
 namespace TranslationsWebApplication.Controllers
@@ -178,6 +179,48 @@ namespace TranslationsWebApplication.Controllers
         private bool TypeExists(int id)
         {
           return (_context.Types?.Any(e => e.TypeId == id)).GetValueOrDefault();
+        }
+
+        [HttpGet]
+        public IActionResult Import()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Import(IFormFile typesFile, CancellationToken cancellationToken)
+        {
+            if (typesFile == null || typesFile.Length == 0)
+            {
+                // Here you can handle the error, for example, by displaying a message on the page
+                return View();
+            }
+
+            // Create an instance of TopicDataPortServiceFactory
+            var typeDataPortServiceFactory = new TypeDataPortServiceFactory(_context);
+            var importService = typeDataPortServiceFactory.GetImportServiceType(typesFile.ContentType);
+
+            using var stream = typesFile.OpenReadStream();
+            await importService.ImportFromStreamAsync(stream, cancellationToken);
+
+            return RedirectToAction(nameof(Index)); // Make sure the Index method exists
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Export([FromQuery] string contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", CancellationToken cancellationToken = default)
+        {
+            var typeDataPortServiceFactory = new TypeDataPortServiceFactory(_context);
+            var exportService = typeDataPortServiceFactory.GetExportServiceType(contentType);
+
+            var memoryStream = new MemoryStream();
+            await exportService.WriteToAsync(memoryStream, cancellationToken);
+            await memoryStream.FlushAsync(cancellationToken);
+            memoryStream.Position = 0;
+
+            return new FileStreamResult(memoryStream, contentType)
+            {
+                FileDownloadName = $"types_{DateTime.UtcNow.ToString("yyyy-MM-dd")}.xlsx"
+            };
         }
     }
 }

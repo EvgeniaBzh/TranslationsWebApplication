@@ -120,7 +120,28 @@
     </tbody>
 </table>
 
-<!-- Переміщення діаграми тут -->
+<div class="row">
+    <div class="col-12">
+        @using (Html.BeginForm("Import", "Types", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            <div class="mb-3">
+                <label for="typesFile" class="form-label">Оберіть файл для завантаження</label>
+                <input type="file" name="typesFile" id="typesFile" />
+            </div>
+            <div>
+                <input class="btn btn-primary mb-3" type="submit" value="Завантажити" id="uploadBtn" disabled />
+            </div>
+        }
+
+        @using (Html.BeginForm("Export", "Types", FormMethod.Get))
+        {
+            <div>
+                <input class="btn btn-primary mb-3" type="submit" value="Експортувати" />
+            </div>
+        }
+    </div>
+</div>
+
 <div id="orderTypeDistributionChart"></div>
 
 @section Scripts
@@ -155,3 +176,18 @@
         }
     </script>
 }
+
+<script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', function () {
+        var fileInput = document.getElementById('typesFile');
+        var uploadBtn = document.getElementById('uploadBtn');
+
+        fileInput.addEventListener('change', function () {
+            if (fileInput.value) {
+                uploadBtn.disabled = false;
+            } else {
+                uploadBtn.disabled = true;
+            }
+        });
+    });
+</script>

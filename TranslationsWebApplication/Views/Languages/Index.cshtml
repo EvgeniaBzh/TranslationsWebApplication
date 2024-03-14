@@ -127,6 +127,28 @@
     <canvas id="languageTranslationStatsChart"></canvas>
 </div>
 
+<div class="row">
+    <div class="col-12">
+        @using (Html.BeginForm("Import", "Languages", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            <div class="mb-3">
+                <label for="langsFile" class="form-label">Оберіть файл для завантаження</label>
+                <input type="file" name="langsFile" id="langsFile" />
+            </div>
+            <div>
+                <input class="btn btn-primary mb-3" type="submit" value="Завантажити" id="uploadBtn" disabled />
+            </div>
+        }
+
+        @using (Html.BeginForm("Export", "Languages", FormMethod.Get))
+        {
+            <div>
+                <input class="btn btn-primary mb-3" type="submit" value="Експортувати" />
+            </div>
+        }
+    </div>
+</div>
+
 <script>
     fetch('/api/Diagram1/languageTranslationStats')
         .then(response => response.json())
@@ -179,4 +201,19 @@
                 }
             });
         });
+</script>
+
+<script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', function () {
+        var fileInput = document.getElementById('langsFile');
+        var uploadBtn = document.getElementById('uploadBtn');
+
+        fileInput.addEventListener('change', function () {
+            if (fileInput.value) {
+                uploadBtn.disabled = false;
+            } else {
+                uploadBtn.disabled = true;
+            }
+        });
+    });
 </script>
